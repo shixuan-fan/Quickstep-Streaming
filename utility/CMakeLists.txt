@@ -13,6 +13,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# Changes:
+# 1. Removed all tests.
+# 2. Removed dependencies for ripped libraries.
+# 3. Removed Benchmarks.
+
 include(CheckCXXSourceCompiles)
 
 # Look for GCC-style builtins (also in clang, ICC, and possibly others) that
@@ -211,9 +216,9 @@ target_link_libraries(quickstep_utility_BitVector
 target_link_libraries(quickstep_utility_BloomFilter
                       glog
                       quickstep_storage_StorageConstants
-                      quickstep_threading_Mutex
-                      quickstep_threading_SharedMutex
-                      quickstep_threading_SpinSharedMutex
+#                      quickstep_threading_Mutex
+#                      quickstep_threading_SharedMutex
+#                      quickstep_threading_SpinSharedMutex
                       quickstep_utility_BloomFilter_proto
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_utility_BloomFilter_proto
@@ -234,13 +239,13 @@ target_link_libraries(quickstep_utility_PrimeNumber
                       glog)
 target_link_libraries(quickstep_utility_PlanVisualizer
                       quickstep_catalog_CatalogRelation
-                      quickstep_queryoptimizer_costmodel_StarSchemaSimpleCostModel
-                      quickstep_queryoptimizer_expressions_AttributeReference
-                      quickstep_queryoptimizer_physical_HashJoin
-                      quickstep_queryoptimizer_physical_Physical
-                      quickstep_queryoptimizer_physical_PhysicalType
-                      quickstep_queryoptimizer_physical_TableReference
-                      quickstep_queryoptimizer_physical_TopLevelPlan
+#                      quickstep_queryoptimizer_costmodel_StarSchemaSimpleCostModel
+#                      quickstep_queryoptimizer_expressions_AttributeReference
+#                      quickstep_queryoptimizer_physical_HashJoin
+#                      quickstep_queryoptimizer_physical_Physical
+#                      quickstep_queryoptimizer_physical_PhysicalType
+#                      quickstep_queryoptimizer_physical_TableReference
+#                      quickstep_queryoptimizer_physical_TopLevelPlan
                       quickstep_utility_Macros
                       quickstep_utility_StringUtil)
 target_link_libraries(quickstep_utility_PtrList
@@ -270,9 +275,9 @@ target_link_libraries(quickstep_utility_SortConfiguration_proto
                       ${PROTOBUF_LIBRARY})
 target_link_libraries(quickstep_utility_ShardedLockManager
                       quickstep_storage_StorageConstants
-                      quickstep_threading_Mutex
-                      quickstep_threading_SharedMutex
-                      quickstep_threading_SpinSharedMutex
+#                      quickstep_threading_Mutex
+#                      quickstep_threading_SharedMutex
+#                      quickstep_threading_SpinSharedMutex
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_utility_StringUtil
                       glog)
@@ -283,8 +288,8 @@ target_link_libraries(quickstep_utility_TextBasedTestDriver
                       gtest_main
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_utility_ThreadSafeQueue
-                      quickstep_threading_ConditionVariable
-                      quickstep_threading_Mutex
+#                      quickstep_threading_ConditionVariable
+#                      quickstep_threading_Mutex
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_utility_TreeStringSerializable
                       glog
@@ -324,118 +329,3 @@ target_link_libraries(quickstep_utility
                       quickstep_utility_ThreadSafeQueue
                       quickstep_utility_TreeStringSerializable
                       quickstep_utility_VectorUtil)
-
-# Tests:
-add_executable(BitVector_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/BitVector_unittest.cpp")
-target_link_libraries(BitVector_unittest
-                      gtest
-                      gtest_main
-                      quickstep_utility_BitVector
-                      ${LIBS})
-add_test(BitVector_unittest BitVector_unittest)
-
-add_executable(BloomFilter_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/BloomFilter_unittest.cpp")
-target_link_libraries(BloomFilter_unittest
-                      gtest
-                      gtest_main
-                      quickstep_utility_BloomFilter
-                      ${LIBS})
-add_test(BloomFilter_unittest BloomFilter_unittest)
-
-add_executable(CalculateInstalledMemory_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/CalculateInstalledMemory_unittest.cpp")
-target_link_libraries(CalculateInstalledMemory_unittest
-                      gtest
-                      gtest_main
-                      quickstep_utility_CalculateInstalledMemory)
-add_test(CalculateInstalledMemory_unittest CalculateInstalledMemory_unittest)
-
-add_executable(DAG_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/DAG_unittest.cpp")
-target_link_libraries(DAG_unittest
-                      gtest
-                      gtest_main
-                      quickstep_utility_DAG
-                      ${LIBS})
-add_test(DAG_unittest DAG_unittest)
-
-add_executable(EqualsAnyConstant_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/EqualsAnyConstant_unittest.cpp")
-target_link_libraries(EqualsAnyConstant_unittest
-                      gtest
-                      gtest_main
-                      quickstep_utility_EqualsAnyConstant
-                      ${LIBS})
-add_test(EqualsAnyConstant_unittest EqualsAnyConstant_unittest)
-
-add_executable(PrimeNumber_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/PrimeNumber_unittest.cpp")
-target_link_libraries(PrimeNumber_unittest
-                      gtest
-                      gtest_main
-                      quickstep_utility_PrimeNumber
-                      ${LIBS})
-add_test(PrimeNumber_unittest PrimeNumber_unittest)
-
-add_executable(ScopedDeleter_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/ScopedDeleter_unittest.cpp")
-target_link_libraries(ScopedDeleter_unittest
-                      gtest
-                      gtest_main
-                      quickstep_utility_ScopedDeleter
-                      ${LIBS})
-add_test(ScopedDeleter_unittest ScopedDeleter_unittest)
-
-add_executable(SqlError_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/SqlError_unittest.cpp")
-target_link_libraries(SqlError_unittest
-                      glog
-                      gtest
-                      gtest_main
-                      quickstep_utility_Macros
-                      quickstep_utility_SqlError)
-add_test(SqlError_unittest SqlError_unittest)
-
-add_executable(TextBasedTestDriver_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/TextBasedTestDriver_unittest.cpp")
-target_link_libraries(TextBasedTestDriver_unittest
-                      glog
-                      gtest
-                      gtest_main
-                      quickstep_utility_Macros
-                      quickstep_utility_TextBasedTestDriver)
-add_test(TextBasedTestDriver_unittest TextBasedTestDriver_unittest)
-
-add_executable(ThreadSafeQueue_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/ThreadSafeQueue_unittest.cpp")
-target_link_libraries(ThreadSafeQueue_unittest
-                      gtest
-                      gtest_main
-                      quickstep_utility_ThreadSafeQueue
-                      ${LIBS})
-add_test(ThreadSafeQueue_unittest ThreadSafeQueue_unittest)
-
-add_executable(TreeStringSerializable_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/TreeStringSerializable_unittest.cpp")
-target_link_libraries(TreeStringSerializable_unittest
-                      glog
-                      gtest
-                      gtest_main
-                      quickstep_utility_TreeStringSerializable)
-add_test(TreeStringSerializable_unittest TreeStringSerializable_unittest)
-
-add_executable(TemplateUtil_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/TemplateUtil_unittest.cpp")
-target_link_libraries(TemplateUtil_unittest
-                      gtest
-                      gtest_main
-                      quickstep_utility_Macros
-                      quickstep_utility_TemplateUtil)
-add_test(TemplateUtil_unittest TemplateUtil_unittest)
-
-# Benchmarks:
-if (UNIX)
-  add_executable(EqualsAnyConstant_benchmark
-                 "${CMAKE_CURRENT_SOURCE_DIR}/tests/EqualsAnyConstant_benchmark.cpp")
-  target_link_libraries(EqualsAnyConstant_benchmark
-                        benchmark
-                        quickstep_utility_EqualsAnyConstant
-                        ${LIBS})
-
-  add_executable(HashPair_benchmark "${CMAKE_CURRENT_SOURCE_DIR}/tests/HashPair_benchmark.cpp")
-  target_link_libraries(HashPair_benchmark
-                        benchmark
-                        quickstep_utility_HashPair
-                        quickstep_types_TypedValue
-                        ${LIBS})
-endif()

@@ -15,15 +15,20 @@
  *   limitations under the License.
  **/
 
+/**
+ * Changes: Removed all SubBlockReference.
+ **/
+
 #ifndef QUICKSTEP_EXPRESSIONS_SCALAR_SCALAR_HPP_
 #define QUICKSTEP_EXPRESSIONS_SCALAR_SCALAR_HPP_
 
 #include <utility>
 #include <vector>
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
-#include "storage/StorageBlockInfo.hpp"
+// #include "storage/StorageBlockInfo.hpp"
 #include "types/TypedValue.hpp"
 #include "utility/Macros.hpp"
 
@@ -198,8 +203,8 @@ class Scalar {
    * @return A ColumnVector of this Scalar's values for each tuple accesible
    *         via accessor.
    **/
-  virtual ColumnVector* getAllValues(ValueAccessor *accessor,
-                                     const SubBlocksReference *sub_blocks_ref) const = 0;
+  virtual ColumnVector* getAllValues(ValueAccessor *accessor) const = 0;
+                                     // const SubBlocksReference *sub_blocks_ref
 
   /**
    * @brief Get this Scalar's value for all specified joined tuples from two

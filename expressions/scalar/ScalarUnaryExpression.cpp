@@ -22,13 +22,15 @@
 #include <utility>
 #include <vector>
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
-#include "storage/ValueAccessor.hpp"
+// #include "storage/ValueAccessor.hpp"
 #include "types/Type.hpp"
 #include "types/TypeErrors.hpp"
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
+#include "types/containers/ValueAccessor.hpp"
 #include "types/operations/Operation.pb.h"
 #include "types/operations/unary_operations/UnaryOperation.hpp"
 
@@ -90,8 +92,8 @@ TypedValue ScalarUnaryExpression::getValueForJoinedTuples(
 }
 
 ColumnVector* ScalarUnaryExpression::getAllValues(
-    ValueAccessor *accessor,
-    const SubBlocksReference *sub_blocks_ref) const {
+    ValueAccessor *accessor) const {
+    // const SubBlocksReference *sub_blocks_ref) const {
   if (fast_operator_.get() == nullptr) {
     return ColumnVector::MakeVectorOfValue(getType(),
                                            static_value_,
@@ -104,7 +106,7 @@ ColumnVector* ScalarUnaryExpression::getAllValues(
     }
 #endif  // QUICKSTEP_ENABLE_VECTOR_COPY_ELISION_SELECTION
 
-    std::unique_ptr<ColumnVector> operand_result(operand_->getAllValues(accessor, sub_blocks_ref));
+    std::unique_ptr<ColumnVector> operand_result(operand_->getAllValues(accessor));
     return fast_operator_->applyToColumnVector(*operand_result);
   }
 }

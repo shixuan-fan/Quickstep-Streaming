@@ -17,8 +17,10 @@
 
 #include "expressions/predicate/Predicate.hpp"
 
-#include "storage/TupleIdSequence.hpp"
-#include "storage/ValueAccessor.hpp"
+#include "common/TupleIdSequence.hpp"
+#include "types/containers/ValueAccessor.hpp"
+// #include "storage/TupleIdSequence.hpp"
+// #include "storage/ValueAccessor.hpp"
 #include "utility/Macros.hpp"
 
 namespace quickstep {

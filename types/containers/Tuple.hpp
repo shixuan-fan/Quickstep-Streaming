@@ -23,7 +23,8 @@
 #include <utility>
 #include <vector>
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "types/TypedValue.hpp"
 #include "types/containers/Tuple.pb.h"
 #include "utility/Macros.hpp"

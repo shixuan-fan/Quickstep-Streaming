@@ -20,16 +20,19 @@
 #include <utility>
 #include <vector>
 
+#include "basics/Common.hpp"
 #include "catalog/CatalogAttribute.hpp"
 #include "catalog/CatalogRelationSchema.hpp"
-#include "catalog/CatalogTypedefs.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
-#include "storage/StorageBlockInfo.hpp"
-#include "storage/ValueAccessor.hpp"
-#include "storage/ValueAccessorUtil.hpp"
+// #include "storage/StorageBlockInfo.hpp"
+// #include "storage/ValueAccessor.hpp"
+// #include "storage/ValueAccessorUtil.hpp"
 #include "types/Type.hpp"
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
+#include "types/containers/ValueAccessor.hpp"
+#include "types/containers/ValueAccessorUtil.hpp"
 #include "utility/Macros.hpp"
 
 #include "glog/logging.h"
@@ -86,8 +89,8 @@ relation_id ScalarAttribute::getRelationIdForValueAccessor() const {
   return attribute_.getParent().getID();
 }
 
-ColumnVector* ScalarAttribute::getAllValues(ValueAccessor *accessor,
-                                            const SubBlocksReference *sub_blocks_ref) const {
+ColumnVector* ScalarAttribute::getAllValues(ValueAccessor *accessor) const {
+                                            // const SubBlocksReference *sub_blocks_ref)
   const attribute_id attr_id = attribute_.getID();
   const Type &result_type = attribute_.getType();
   return InvokeOnValueAccessorMaybeTupleIdSequenceAdapter(

@@ -13,11 +13,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-add_subdirectory(aggregation)
+# add_subdirectory(aggregation)
 add_subdirectory(predicate)
 add_subdirectory(scalar)
-add_subdirectory(table_generator)
-add_subdirectory(window_aggregation)
+# add_subdirectory(table_generator)
+# add_subdirectory(window_aggregation)
 
 QS_PROTOBUF_GENERATE_CPP(expressions_Expressions_proto_srcs
                          expressions_Expressions_proto_hdrs
@@ -33,7 +33,7 @@ target_link_libraries(quickstep_expressions_ExpressionFactories
                       glog
                       quickstep_catalog_CatalogDatabaseLite
                       quickstep_catalog_CatalogRelationSchema
-                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_catalog_CatalogTypedefs
                       quickstep_expressions_Expressions_proto
                       quickstep_expressions_predicate_ComparisonPredicate
                       quickstep_expressions_predicate_ConjunctionPredicate
@@ -63,7 +63,7 @@ target_link_libraries(quickstep_expressions_Expressions_proto
 add_library(quickstep_expressions ../empty_src.cpp ExpressionsModule.hpp)
 target_link_libraries(quickstep_expressions
                       quickstep_expressions_ExpressionFactories
-                      quickstep_expressions_Expressions_proto
-                      quickstep_expressions_aggregation
-                      quickstep_expressions_predicate
-                      quickstep_expressions_scalar)
+                      quickstep_expressions_Expressions_proto)
+#                      quickstep_expressions_aggregation
+#                      quickstep_expressions_predicate
+#                      quickstep_expressions_scalar)

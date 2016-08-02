@@ -29,14 +29,15 @@
 #include "expressions/predicate/PredicateCost.hpp"
 #include "expressions/scalar/Scalar.hpp"
 #include "expressions/scalar/ScalarAttribute.hpp"
-#include "storage/IndexSubBlock.hpp"
-#include "storage/SubBlocksReference.hpp"
-#include "storage/TupleStorageSubBlock.hpp"
-#include "storage/ValueAccessor.hpp"
+// #include "storage/IndexSubBlock.hpp"
+// #include "storage/SubBlocksReference.hpp"
+// #include "storage/TupleStorageSubBlock.hpp"
+// #include "storage/ValueAccessor.hpp"
 #include "types/Type.hpp"
 #include "types/TypeErrors.hpp"
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
+#include "types/containers/ValueAccessor.hpp"
 #include "types/operations/Operation.pb.h"
 #include "types/operations/comparisons/Comparison.hpp"
 #include "utility/Macros.hpp"
@@ -116,7 +117,7 @@ bool ComparisonPredicate::matchesForJoinedTuples(
 
 TupleIdSequence* ComparisonPredicate::getAllMatches(
     ValueAccessor *accessor,
-    const SubBlocksReference *sub_blocks_ref,
+//    const SubBlocksReference *sub_blocks_ref,
     const TupleIdSequence *filter,
     const TupleIdSequence *existence_map) const {
 #ifdef QUICKSTEP_ENABLE_VECTOR_PREDICATE_SHORT_CIRCUIT
@@ -127,7 +128,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
 
   if (fast_comparator_.get() == nullptr) {
     return GenerateSequenceForStaticResult(accessor, filter, existence_map, static_result_);
-  } else if (sub_blocks_ref != nullptr && comparison_.isBasicComparison()) {
+  } /* else if (sub_blocks_ref != nullptr && comparison_.isBasicComparison()) {
     // NOTE(Jianqiao): sub-block indices only apply to basic comparisons.
 
     // Try to find a method faster than a simple scan to evaluate this
@@ -150,7 +151,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
     } else if (!PredicateCostIsSimpleScan(lowest_cost)) {
       return sub_blocks_ref->tuple_store.getMatchesForPredicate(*this, filter);
     }
-  }
+  }*/
 
   // When short-circuiting is turned on, we should only evaluate the comparison
   // for tuples that are set in '*filter'. We might need to generate a
@@ -189,8 +190,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
 
     if (short_circuit_adapter) {
       std::unique_ptr<ColumnVector> right_values(right_operand_->getAllValues(
-          short_circuit_adapter.get(),
-          sub_blocks_ref));
+          short_circuit_adapter.get()));
       return fast_comparator_->compareStaticValueAndColumnVector(
           left_operand_->getStaticValue(),
           *right_values,
@@ -198,8 +198,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
           filter);
     } else {
       std::unique_ptr<ColumnVector> right_values(right_operand_->getAllValues(
-          accessor,
-          sub_blocks_ref));
+          accessor));
       return fast_comparator_->compareStaticValueAndColumnVector(
           left_operand_->getStaticValue(),
           *right_values,
@@ -221,8 +220,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
 
     if (short_circuit_adapter) {
       std::unique_ptr<ColumnVector> left_values(left_operand_->getAllValues(
-          short_circuit_adapter.get(),
-          sub_blocks_ref));
+          short_circuit_adapter.get()));
       return fast_comparator_->compareColumnVectorAndStaticValue(
           *left_values,
           right_operand_->getStaticValue(),
@@ -230,8 +228,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
           filter);
     } else {
       std::unique_ptr<ColumnVector> left_values(left_operand_->getAllValues(
-          accessor,
-          sub_blocks_ref));
+          accessor));
       return fast_comparator_->compareColumnVectorAndStaticValue(
           *left_values,
           right_operand_->getStaticValue(),
@@ -254,8 +251,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
       } else {
         if (short_circuit_adapter) {
           std::unique_ptr<ColumnVector> right_values(right_operand_->getAllValues(
-              short_circuit_adapter.get(),
-              sub_blocks_ref));
+              short_circuit_adapter.get()));
           return fast_comparator_->compareValueAccessorAndColumnVector(
               short_circuit_adapter.get(),
               left_operand_attr_id,
@@ -264,8 +260,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
               filter);
         } else {
           std::unique_ptr<ColumnVector> right_values(right_operand_->getAllValues(
-              accessor,
-              sub_blocks_ref));
+              accessor));
           return fast_comparator_->compareValueAccessorAndColumnVector(accessor,
                                                                        left_operand_attr_id,
                                                                        *right_values,
@@ -276,8 +271,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
     } else if (right_operand_attr_id != -1) {
       if (short_circuit_adapter) {
         std::unique_ptr<ColumnVector> left_values(left_operand_->getAllValues(
-            short_circuit_adapter.get(),
-            sub_blocks_ref));
+            short_circuit_adapter.get()));
         return fast_comparator_->compareColumnVectorAndValueAccessor(
             *left_values,
             short_circuit_adapter.get(),
@@ -286,8 +280,7 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
             filter);
       } else {
         std::unique_ptr<ColumnVector> left_values(left_operand_->getAllValues(
-            accessor,
-            sub_blocks_ref));
+            accessor));
         return fast_comparator_->compareColumnVectorAndValueAccessor(*left_values,
                                                                      accessor,
                                                                      right_operand_attr_id,
@@ -299,22 +292,18 @@ TupleIdSequence* ComparisonPredicate::getAllMatches(
 
     if (short_circuit_adapter) {
       std::unique_ptr<ColumnVector> left_values(left_operand_->getAllValues(
-          short_circuit_adapter.get(),
-          sub_blocks_ref));
+          short_circuit_adapter.get()));
       std::unique_ptr<ColumnVector> right_values(right_operand_->getAllValues(
-          short_circuit_adapter.get(),
-          sub_blocks_ref));
+          short_circuit_adapter.get()));
       return fast_comparator_->compareColumnVectors(*left_values,
                                                     *right_values,
                                                     nullptr,
                                                     filter);
     } else {
       std::unique_ptr<ColumnVector> left_values(left_operand_->getAllValues(
-          accessor,
-          sub_blocks_ref));
+          accessor));
       std::unique_ptr<ColumnVector> right_values(right_operand_->getAllValues(
-          accessor,
-          sub_blocks_ref));
+          accessor));
       return fast_comparator_->compareColumnVectors(*left_values,
                                                     *right_values,
                                                     filter,

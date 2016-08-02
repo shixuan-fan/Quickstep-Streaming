@@ -19,7 +19,7 @@ syntax = "proto2";
 
 package quickstep.serialization;
 
-import "Type.proto";
+import "types/Type.proto";
 
 message Comparison {
   enum ComparisonID {

@@ -15,12 +15,17 @@
  *   limitations under the License.
  **/
 
+/**
+ * Changes: Removed SubBlockReference.
+ **/
+
 #ifndef QUICKSTEP_EXPRESSIONS_PREDICATE_PREDICATE_HPP_
 #define QUICKSTEP_EXPRESSIONS_PREDICATE_PREDICATE_HPP_
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
-#include "storage/StorageBlockInfo.hpp"
+// #include "storage/StorageBlockInfo.hpp"
 #include "utility/Macros.hpp"
 
 namespace quickstep {
@@ -28,7 +33,7 @@ namespace quickstep {
 class TupleIdSequence;
 class ValueAccessor;
 
-struct SubBlocksReference;
+// struct SubBlocksReference;
 
 /** \addtogroup Expressions
  *  @{
@@ -163,7 +168,7 @@ class Predicate {
    *         predicate.
    **/
   virtual TupleIdSequence* getAllMatches(ValueAccessor *accessor,
-                                         const SubBlocksReference *sub_blocks_ref,
+                                         // const SubBlocksReference *sub_blocks_ref,
                                          const TupleIdSequence *filter,
                                          const TupleIdSequence *existence_map) const = 0;
 

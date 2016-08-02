@@ -22,10 +22,11 @@
 #include <utility>
 #include <vector>
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
 #include "expressions/scalar/Scalar.hpp"
-#include "storage/StorageBlockInfo.hpp"
+// #include "storage/StorageBlockInfo.hpp"
 #include "types/TypedValue.hpp"
 #include "types/operations/unary_operations/UnaryOperation.hpp"
 #include "utility/Macros.hpp"
@@ -91,8 +92,8 @@ class ScalarUnaryExpression : public Scalar {
     return static_value_;
   }
 
-  ColumnVector* getAllValues(ValueAccessor *accessor,
-                             const SubBlocksReference *sub_blocks_ref) const override;
+  ColumnVector* getAllValues(ValueAccessor *accessor) const override;
+                             // const SubBlocksReference *sub_blocks_ref) const override;
 
   ColumnVector* getAllValuesForJoin(
       const relation_id left_relation_id,

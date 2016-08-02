@@ -17,7 +17,7 @@ syntax = "proto2";
 
 package quickstep.serialization;
 
-import "Type.proto";
+import "types/Type.proto";
 
 message TypedValue {
   required Type.TypeID type_id = 1;

@@ -21,11 +21,12 @@
 #include <memory>
 #include <utility>
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
 #include "expressions/predicate/Predicate.hpp"
 #include "expressions/scalar/Scalar.hpp"
-#include "storage/StorageBlockInfo.hpp"
+// #include "storage/StorageBlockInfo.hpp"
 #include "types/operations/comparisons/Comparison.hpp"
 #include "utility/Macros.hpp"
 
@@ -36,7 +37,7 @@ namespace quickstep {
 class TupleIdSequence;
 class ValueAccessor;
 
-struct SubBlocksReference;
+// struct SubBlocksReference;
 
 /** \addtogroup Expressions
  *  @{
@@ -85,7 +86,7 @@ class ComparisonPredicate : public Predicate {
       const tuple_id right_tuple_id) const override;
 
   TupleIdSequence* getAllMatches(ValueAccessor *accessor,
-                                 const SubBlocksReference *sub_blocks_ref,
+                                 // const SubBlocksReference *sub_blocks_ref,
                                  const TupleIdSequence *filter,
                                  const TupleIdSequence *existence_map) const override;
 

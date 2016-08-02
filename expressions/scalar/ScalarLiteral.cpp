@@ -20,13 +20,15 @@
 #include <utility>
 #include <vector>
 
+#include "basics/Common.hpp"
 #include "expressions/Expressions.pb.h"
-#include "storage/ValueAccessor.hpp"
+// #include "storage/ValueAccessor.hpp"
 #include "types/Type.hpp"
 #include "types/Type.pb.h"
 #include "types/TypedValue.hpp"
 #include "types/TypedValue.pb.h"
 #include "types/containers/ColumnVector.hpp"
+#include "types/containers/ValueAccessor.hpp"
 
 namespace quickstep {
 
@@ -46,8 +48,8 @@ Scalar* ScalarLiteral::clone() const {
 }
 
 ColumnVector* ScalarLiteral::getAllValues(
-    ValueAccessor *accessor,
-    const SubBlocksReference *sub_blocks_ref) const {
+    ValueAccessor *accessor) const {
+    // const SubBlocksReference *sub_blocks_ref) const {
   return ColumnVector::MakeVectorOfValue(
       type_,
       internal_literal_,

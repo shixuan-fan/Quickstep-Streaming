@@ -15,13 +15,14 @@
 //   See the License for the specific language governing permissions and
 //   limitations under the License.
 
+// Change:
+// Removed unrelated message types.
+
 syntax = "proto2";
 
 package quickstep.serialization;
 
-// import "storage/StorageBlockLayout.proto";
 import "types/Type.proto";
-//import "TypedValue.proto";
 
 message CatalogAttribute {
   required string name = 1;
@@ -37,4 +38,14 @@ message CatalogRelationSchema {
   repeated CatalogAttribute attributes = 4;
 
   extensions 16 to max;
+}
+
+message CatalogDatabase {
+  required string name = 1;
+  repeated CatalogRelationSchema relations = 2;
+  repeated int32 null_relations = 3;
+}
+
+message Catalog {
+  repeated CatalogDatabase databases = 1;
 }

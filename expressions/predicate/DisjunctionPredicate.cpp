@@ -19,10 +19,12 @@
 
 #include <memory>
 
+#include "common/TupleIdSequence.hpp"
 #include "expressions/Expressions.pb.h"
 #include "expressions/predicate/Predicate.hpp"
-#include "storage/TupleIdSequence.hpp"
-#include "storage/ValueAccessor.hpp"
+#include "types/containers/ValueAccessor.hpp"
+// #include "storage/TupleIdSequence.hpp"
+// #include "storage/ValueAccessor.hpp"
 #include "utility/PtrList.hpp"
 
 namespace quickstep {
@@ -110,7 +112,7 @@ bool DisjunctionPredicate::matchesForJoinedTuples(
 
 TupleIdSequence* DisjunctionPredicate::getAllMatches(
     ValueAccessor *accessor,
-    const SubBlocksReference *sub_blocks_ref,
+    // const SubBlocksReference *sub_blocks_ref,
     const TupleIdSequence *filter,
     const TupleIdSequence *existence_map) const {
   if (has_static_result_) {
@@ -135,12 +137,12 @@ TupleIdSequence* DisjunctionPredicate::getAllMatches(
          ++it) {
 #ifdef QUICKSTEP_ENABLE_VECTOR_PREDICATE_SHORT_CIRCUIT
       std::unique_ptr<TupleIdSequence> operand_result(it->getAllMatches(accessor,
-                                                                        sub_blocks_ref,
+                                                                        // sub_blocks_ref,
                                                                         current_filter.get(),
                                                                         existence_map));
 #else
       std::unique_ptr<TupleIdSequence> operand_result(it->getAllMatches(accessor,
-                                                                        sub_blocks_ref,
+                                                                        // sub_blocks_ref,
                                                                         filter,
                                                                         existence_map));
 #endif  // QUICKSTEP_ENABLE_VECTOR_PREDICATE_SHORT_CIRCUIT

@@ -23,6 +23,7 @@ add_library(quickstep_types_containers_ColumnVectorsValueAccessor ../../empty_sr
 add_library(quickstep_types_containers_Tuple ../../empty_src.cpp Tuple.hpp)
 add_library(quickstep_types_containers_TupleVectorValueAccessor ../../empty_src.cpp TupleVectorValueAccessor.hpp) 
 add_library(quickstep_types_containers_Tuple_proto ${types_containers_Tuple_proto_srcs})
+add_library(quickstep_types_containers_ValueAccessor ../../empty_src.cpp ValueAccessor.hpp)
 
 # Link dependencies:
 target_link_libraries(quickstep_types_containers_ColumnVector
@@ -35,9 +36,9 @@ target_link_libraries(quickstep_types_containers_ColumnVectorUtil
                       quickstep_types_containers_ColumnVector)
 target_link_libraries(quickstep_types_containers_ColumnVectorsValueAccessor
                       glog
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_ValueAccessor
+#                       quickstep_catalog_CatalogTypedefs
+#                       quickstep_storage_StorageBlockInfo
+#                       quickstep_storage_ValueAccessor
                       quickstep_types_TypedValue
                       quickstep_types_containers_ColumnVector
                       quickstep_types_containers_Tuple
@@ -45,21 +46,27 @@ target_link_libraries(quickstep_types_containers_ColumnVectorsValueAccessor
                       quickstep_utility_ScopedDeleter)
 target_link_libraries(quickstep_types_containers_Tuple
                       glog
-                      quickstep_catalog_CatalogTypedefs
+#                       quickstep_catalog_CatalogTypedefs
                       quickstep_types_TypedValue
                       quickstep_types_containers_Tuple_proto
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_types_containers_TupleVectorValueAccessor
                       glog
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_ValueAccessor
+#                       quickstep_catalog_CatalogTypedefs
+#                       quickstep_storage_StorageBlockInfo
+#                       quickstep_storage_ValueAccessor
                       quickstep_types_TypedValue
                       quickstep_types_containers_Tuple
                       quickstep_utility_Macros) 
 target_link_libraries(quickstep_types_containers_Tuple_proto
                       quickstep_types_TypedValue_proto
                       ${PROTOBUF_LIBRARY})
+target_link_libraries(quickstep_types_containers_ValueAccessor
+                      quickstep_catalog_CatalogAttribute
+                      quickstep_catalog_CatalogRelationSchema
+                      quickstep_types_TypedValue
+                      quickstep_types_containers_Tuple
+                      quickstep_utility_Macros)
 
 # Module all-in-one library:
 add_library(quickstep_types_containers ../../empty_src.cpp)

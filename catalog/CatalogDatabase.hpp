@@ -15,6 +15,11 @@
  *   limitations under the License.
  **/
 
+/**
+ * Changes:
+ * 1. Change CatalogRelation to lighter version CatalogRelationSchema.
+ **/
+ 
 #ifndef QUICKSTEP_CATALOG_CATALOG_DATABASE_HPP_
 #define QUICKSTEP_CATALOG_CATALOG_DATABASE_HPP_
 
@@ -22,11 +27,14 @@
 #include <string>
 #include <unordered_map>
 
+#include "basics/Common.hpp"
 #include "catalog/Catalog.pb.h"
 #include "catalog/CatalogDatabaseLite.hpp"
-#include "catalog/CatalogRelation.hpp"
-#include "catalog/CatalogTypedefs.hpp"
-#include "storage/StorageConstants.hpp"
+#include "catalog/CatalogRelationSchema.hpp"
+#include "common/StorageConstants.hpp"
+// #include "catalog/CatalogRelation.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
+// #include "storage/StorageConstants.hpp"
 #include "threading/Mutex.hpp"
 #include "threading/SharedMutex.hpp"
 #include "threading/SpinSharedMutex.hpp"
@@ -138,8 +146,8 @@ class RelationIdNotFound : public std::exception {
  **/
 class CatalogDatabase : public CatalogDatabaseLite {
  public:
-  typedef std::unordered_map<std::string, CatalogRelation*>::size_type size_type;
-  typedef PtrVector<CatalogRelation, true>::const_skip_iterator const_iterator;
+  typedef std::unordered_map<std::string, CatalogRelationSchema*>::size_type size_type;
+  typedef PtrVector<CatalogRelationSchema, true>::const_skip_iterator const_iterator;
 
   enum class Status {
     kConsistent = 0,
@@ -274,7 +282,7 @@ class CatalogDatabase : public CatalogDatabaseLite {
    * @param rel_name The name to search for.
    * @return The relation with the given name. NULL if the relation is not found.
    **/
-  const CatalogRelation* getRelationByName(const std::string &rel_name) const;
+  const CatalogRelationSchema* getRelationByName(const std::string &rel_name) const;
 
   /**
    * @brief Get a mutable pointer to a relation by name. The search is case-insensitive.
@@ -282,7 +290,7 @@ class CatalogDatabase : public CatalogDatabaseLite {
    * @param rel_name The name to search for.
    * @return The relation with the given name. NULL if the relation is not found.
    **/
-  CatalogRelation* getRelationByNameMutable(const std::string &rel_name);
+  CatalogRelationSchema* getRelationByNameMutable(const std::string &rel_name);
 
   /**
    * @brief Get a relation by ID.
@@ -290,7 +298,7 @@ class CatalogDatabase : public CatalogDatabaseLite {
    * @param id The id to search for.
    * @return The relation with the given ID.
    **/
-  const CatalogRelation* getRelationById(const relation_id id) const {
+  const CatalogRelationSchema* getRelationById(const relation_id id) const {
     SpinSharedMutexSharedLock<false> lock(relations_mutex_);
     if (hasRelationWithIdUnsafe(id)) {
       return &rel_vec_[id];
@@ -305,7 +313,7 @@ class CatalogDatabase : public CatalogDatabaseLite {
    * @param id The id to search for.
    * @return The relation with the given ID.
    **/
-  CatalogRelation* getRelationByIdMutable(const relation_id id) {
+  CatalogRelationSchema* getRelationByIdMutable(const relation_id id) {
     SpinSharedMutexSharedLock<false> lock(relations_mutex_);
     if (hasRelationWithIdUnsafe(id)) {
       return &(rel_vec_[id]);
@@ -323,7 +331,7 @@ class CatalogDatabase : public CatalogDatabaseLite {
    *            is already present in the database.
    * @return The id assigned to the relation.
    **/
-  relation_id addRelation(CatalogRelation *new_rel);
+  relation_id addRelation(CatalogRelationSchema *new_rel);
 
   /**
    * @brief Drop (delete) a relation by name.
@@ -404,7 +412,7 @@ class CatalogDatabase : public CatalogDatabaseLite {
    **/
   bool idInRange(const relation_id id) const {
     return ((id >= 0)
-            && (static_cast<PtrVector<CatalogRelation>::size_type>(id) < rel_vec_.size()));
+            && (static_cast<PtrVector<CatalogRelationSchema>::size_type>(id) < rel_vec_.size()));
   }
 
   /**
@@ -443,13 +451,13 @@ class CatalogDatabase : public CatalogDatabaseLite {
   alignas(kCacheLineBytes) mutable SpinSharedMutex<false> status_mutex_;
 
   // A vector of relations. NULL if the relation has dropped from the database.
-  PtrVector<CatalogRelation, true> rel_vec_;
+  PtrVector<CatalogRelationSchema, true> rel_vec_;
 
   /**
    * @brief Map from relation name to the pointer to the corresponding relation.
    *        The relation name stored in the map is in lowercase characters.
    */
-  std::unordered_map<std::string, CatalogRelation*> rel_map_;
+  std::unordered_map<std::string, CatalogRelationSchema*> rel_map_;
 
   // Concurrency protection for 'rel_vec_' and 'rel_map_'.
   alignas(kCacheLineBytes) mutable SpinSharedMutex<false> relations_mutex_;

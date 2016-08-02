@@ -18,11 +18,12 @@
 #ifndef QUICKSTEP_EXPRESSIONS_PREDICATE_DISJUNCTION_PREDICATE_HPP_
 #define QUICKSTEP_EXPRESSIONS_PREDICATE_DISJUNCTION_PREDICATE_HPP_
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
 #include "expressions/predicate/Predicate.hpp"
 #include "expressions/predicate/PredicateWithList.hpp"
-#include "storage/StorageBlockInfo.hpp"
+// #include "storage/StorageBlockInfo.hpp"
 #include "utility/Macros.hpp"
 
 namespace quickstep {
@@ -30,7 +31,7 @@ namespace quickstep {
 class TupleIdSequence;
 class ValueAccessor;
 
-struct SubBlocksReference;
+// struct SubBlocksReference;
 
 /** \addtogroup Expressions
  *  @{
@@ -68,7 +69,7 @@ class DisjunctionPredicate : public PredicateWithList {
       const tuple_id right_tuple_id) const override;
 
   TupleIdSequence* getAllMatches(ValueAccessor *accessor,
-                                 const SubBlocksReference *sub_blocks_ref,
+                                 // const SubBlocksReference *sub_blocks_ref,
                                  const TupleIdSequence *filter,
                                  const TupleIdSequence *existence_map) const override;
 

@@ -22,13 +22,15 @@
 #include <utility>
 #include <vector>
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
-#include "storage/ValueAccessor.hpp"
+// #include "storage/ValueAccessor.hpp"
 #include "types/Type.hpp"
 #include "types/TypeErrors.hpp"
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
+#include "types/containers/ValueAccessor.hpp"
 #include "types/operations/Operation.pb.h"
 #include "types/operations/binary_operations/BinaryOperation.hpp"
 
@@ -100,8 +102,8 @@ TypedValue ScalarBinaryExpression::getValueForJoinedTuples(
 }
 
 ColumnVector* ScalarBinaryExpression::getAllValues(
-    ValueAccessor *accessor,
-    const SubBlocksReference *sub_blocks_ref) const {
+    ValueAccessor *accessor) const {
+    // const SubBlocksReference *sub_blocks_ref) const {
   if (fast_operator_.get() == nullptr) {
     return ColumnVector::MakeVectorOfValue(getType(),
                                            static_value_,
@@ -123,7 +125,7 @@ ColumnVector* ScalarBinaryExpression::getAllValues(
 #endif  // QUICKSTEP_ENABLE_VECTOR_COPY_ELISION_SELECTION
 
       std::unique_ptr<ColumnVector> right_result(
-          right_operand_->getAllValues(accessor, sub_blocks_ref));
+          right_operand_->getAllValues(accessor));
       return fast_operator_->applyToStaticValueAndColumnVector(
           left_operand_->getStaticValue(),
           *right_result);
@@ -140,7 +142,7 @@ ColumnVector* ScalarBinaryExpression::getAllValues(
 #endif  // QUICKSTEP_ENABLE_VECTOR_COPY_ELISION_SELECTION
 
       std::unique_ptr<ColumnVector> left_result(
-          left_operand_->getAllValues(accessor, sub_blocks_ref));
+          left_operand_->getAllValues(accessor));
       return fast_operator_->applyToColumnVectorAndStaticValue(
           *left_result,
           right_operand_->getStaticValue());
@@ -158,14 +160,14 @@ ColumnVector* ScalarBinaryExpression::getAllValues(
                                                             right_operand_attr_id);
         } else {
           std::unique_ptr<ColumnVector> right_result(
-              right_operand_->getAllValues(accessor, sub_blocks_ref));
+              right_operand_->getAllValues(accessor));
           return fast_operator_->applyToValueAccessorAndColumnVector(accessor,
                                                                      left_operand_attr_id,
                                                                      *right_result);
         }
       } else if (right_operand_attr_id != -1) {
         std::unique_ptr<ColumnVector> left_result(
-            left_operand_->getAllValues(accessor, sub_blocks_ref));
+            left_operand_->getAllValues(accessor));
         return fast_operator_->applyToColumnVectorAndValueAccessor(*left_result,
                                                                    accessor,
                                                                    right_operand_attr_id);
@@ -173,9 +175,9 @@ ColumnVector* ScalarBinaryExpression::getAllValues(
 #endif  // QUICKSTEP_ENABLE_VECTOR_COPY_ELISION_SELECTION
 
       std::unique_ptr<ColumnVector> left_result(
-          left_operand_->getAllValues(accessor, sub_blocks_ref));
+          left_operand_->getAllValues(accessor));
       std::unique_ptr<ColumnVector> right_result(
-          right_operand_->getAllValues(accessor, sub_blocks_ref));
+          right_operand_->getAllValues(accessor));
       return fast_operator_->applyToColumnVectors(*left_result, *right_result);
     }
   }

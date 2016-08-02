@@ -17,7 +17,8 @@
 #ifndef QUICKSTEP_CATALOG_CATALOG_DATABASE_LITE_HPP_
 #define QUICKSTEP_CATALOG_CATALOG_DATABASE_LITE_HPP_
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "utility/Macros.hpp"
 
 namespace quickstep {

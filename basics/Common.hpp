@@ -19,6 +19,7 @@
 #define QUICKSTEP_COMMON_HPP_
 
 #include <climits>
+#include <cstddef>
 
 namespace quickstep {
 

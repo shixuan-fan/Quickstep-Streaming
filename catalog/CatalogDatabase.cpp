@@ -15,6 +15,10 @@
  *   limitations under the License.
  **/
 
+/**
+ * Changes: CatalogRelation => CatalogRelationSchema.
+ **/ 
+
 #include "catalog/CatalogDatabase.hpp"
 
 #include <cstddef>
@@ -25,7 +29,7 @@
 
 #include "catalog/Catalog.pb.h"
 #include "catalog/CatalogErrors.hpp"
-#include "catalog/CatalogRelation.hpp"
+// #include "catalog/CatalogRelation.hpp"
 #include "threading/Mutex.hpp"
 #include "threading/SpinSharedMutex.hpp"
 #include "utility/PtrVector.hpp"
@@ -46,7 +50,7 @@ bool CatalogDatabase::ProtoIsValid(const serialization::CatalogDatabase &proto) 
   }
 
   for (int i = 0; i < proto.relations_size(); ++i) {
-    if (!CatalogRelation::ProtoIsValid(proto.relations(i))) {
+    if (!CatalogRelationSchema::ProtoIsValid(proto.relations(i))) {
       return false;
     }
   }
@@ -70,14 +74,14 @@ CatalogDatabase::CatalogDatabase(const serialization::CatalogDatabase &proto)
       rel_vec_.push_back(NULL);
       ++index_null_relations;
     } else {
-      addRelation(new CatalogRelation(proto.relations(index_relations - index_null_relations)));
+      addRelation(new CatalogRelationSchema(proto.relations(index_relations - index_null_relations)));
     }
   }
 }
 
-const CatalogRelation* CatalogDatabase::getRelationByName(const string &rel_name) const {
+const CatalogRelationSchema* CatalogDatabase::getRelationByName(const string &rel_name) const {
   SpinSharedMutexSharedLock<false> lock(relations_mutex_);
-  std::unordered_map<string, CatalogRelation*>::const_iterator it = rel_map_.find(ToLower(rel_name));
+  std::unordered_map<string, CatalogRelationSchema*>::const_iterator it = rel_map_.find(ToLower(rel_name));
   if (it == rel_map_.end()) {
     return nullptr;
   } else {
@@ -85,9 +89,9 @@ const CatalogRelation* CatalogDatabase::getRelationByName(const string &rel_name
   }
 }
 
-CatalogRelation* CatalogDatabase::getRelationByNameMutable(const string &rel_name) {
+CatalogRelationSchema* CatalogDatabase::getRelationByNameMutable(const string &rel_name) {
   SpinSharedMutexSharedLock<false> lock(relations_mutex_);
-  std::unordered_map<string, CatalogRelation*>::iterator it = rel_map_.find(ToLower(rel_name));
+  std::unordered_map<string, CatalogRelationSchema*>::iterator it = rel_map_.find(ToLower(rel_name));
   if (it == rel_map_.end()) {
     return nullptr;
   } else {
@@ -95,7 +99,7 @@ CatalogRelation* CatalogDatabase::getRelationByNameMutable(const string &rel_nam
   }
 }
 
-relation_id CatalogDatabase::addRelation(CatalogRelation *new_rel) {
+relation_id CatalogDatabase::addRelation(CatalogRelationSchema *new_rel) {
   const string lower_rel_name = ToLower(new_rel->getName());
   {
     SpinSharedMutexExclusiveLock<false> lock(relations_mutex_);
@@ -115,7 +119,7 @@ relation_id CatalogDatabase::addRelation(CatalogRelation *new_rel) {
 
 void CatalogDatabase::dropRelationByName(const std::string &rel_name) {
   SpinSharedMutexExclusiveLock<false> lock(relations_mutex_);
-  std::unordered_map<string, CatalogRelation*>::iterator it = rel_map_.find(ToLower(rel_name));
+  std::unordered_map<string, CatalogRelationSchema*>::iterator it = rel_map_.find(ToLower(rel_name));
   if (it == rel_map_.end()) {
     throw RelationNameNotFound(name_, rel_name);
   } else {
@@ -139,7 +143,7 @@ serialization::CatalogDatabase CatalogDatabase::getProto() const {
   proto.set_name(name_);
 
   int i = 0;
-  for (PtrVector<CatalogRelation, true>::const_iterator it = rel_vec_.begin(); it != rel_vec_.end(); ++it, ++i) {
+  for (PtrVector<CatalogRelationSchema, true>::const_iterator it = rel_vec_.begin(); it != rel_vec_.end(); ++it, ++i) {
     if (it.isNull()) {
       proto.add_null_relations(i);
     } else {

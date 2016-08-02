@@ -25,9 +25,11 @@
 #include "basics/Common.hpp"
 
 #ifdef QUICKSTEP_ENABLE_VECTOR_COPY_ELISION_SELECTION
-#include "storage/StorageBlockInfo.hpp"
-#include "storage/ValueAccessor.hpp"
-#include "storage/ValueAccessorUtil.hpp"
+// #include "storage/StorageBlockInfo.hpp"
+// #include "storage/ValueAccessor.hpp"
+// #include "storage/ValueAccessorUtil.hpp"
+#include "types/containers/ValueAccessor.hpp"
+#include "types/containers/ValueAccessorUtil.hpp"
 #endif  // QUICKSTEP_ENABLE_VECTOR_COPY_ELISION_SELECTION
 
 #include "types/TypedValue.hpp"

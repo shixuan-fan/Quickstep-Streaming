@@ -13,6 +13,9 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# Change:
+# 1. Removed tests and benchmarks.
+
 include(CheckCXXSymbolExists)
 
 # strnlen, gmtime_r, and localtime_r are POSIX extensions, not strictly ANSI C.
@@ -71,21 +74,3 @@ target_link_libraries(quickstep_types_port
                       quickstep_types_port_localtime_r
                       quickstep_types_port_strnlen
                       quickstep_types_port_timegm)
-
-# Tests
-add_executable(timegm_unittest "${CMAKE_CURRENT_SOURCE_DIR}/tests/timegm_unittest.cpp")
-target_link_libraries(timegm_unittest
-                      glog
-                      gtest
-                      gtest_main
-                      quickstep_types_port_timegm)
-add_test(timegm_unittest timegm_unittest)
-
-# Benchmarks
-if (UNIX)
-  add_executable(timegm_benchmark "${CMAKE_CURRENT_SOURCE_DIR}/tests/timegm_benchmark.cpp")
-  target_link_libraries(timegm_benchmark
-                        benchmark
-                        quickstep_types_port_timegm
-                        ${LIBS})
-endif()

@@ -23,12 +23,14 @@
 #include <utility>
 #include <vector>
 
-#include "catalog/CatalogTypedefs.hpp"
-#include "storage/StorageBlockInfo.hpp"
-#include "storage/ValueAccessor.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
+// #include "storage/StorageBlockInfo.hpp"
+// #include "storage/ValueAccessor.hpp"
+#include "basics/Common.hpp"
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
 #include "types/containers/Tuple.hpp"
+#include "types/containers/ValueAccessor.hpp"
 #include "utility/Macros.hpp"
 #include "utility/ScopedDeleter.hpp"
 

@@ -17,9 +17,10 @@
 
 #include "expressions/predicate/NegationPredicate.hpp"
 
+#include "common/TupleIdSequence.hpp"
 #include "expressions/Expressions.pb.h"
 #include "expressions/predicate/Predicate.hpp"
-#include "storage/TupleIdSequence.hpp"
+// #include "storage/TupleIdSequence.hpp"
 #include "utility/Macros.hpp"
 
 namespace quickstep {
@@ -68,14 +69,14 @@ bool NegationPredicate::matchesForJoinedTuples(
 
 TupleIdSequence* NegationPredicate::getAllMatches(
     ValueAccessor *accessor,
-    const SubBlocksReference *sub_blocks_ref,
+    // const SubBlocksReference *sub_blocks_ref,
     const TupleIdSequence *filter,
     const TupleIdSequence *existence_map) const {
   if (has_static_result_) {
     return GenerateSequenceForStaticResult(accessor, filter, existence_map, static_result_);
   } else {
     TupleIdSequence *operand_matches = operand_->getAllMatches(accessor,
-                                                               sub_blocks_ref,
+                                                               // sub_blocks_ref,
                                                                filter,
                                                                existence_map);
 

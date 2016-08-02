@@ -23,11 +23,11 @@
 #include <utility>
 #include <vector>
 
-#include "catalog/CatalogTypedefs.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
 #include "expressions/predicate/Predicate.hpp"
 #include "expressions/scalar/Scalar.hpp"
-#include "storage/StorageBlockInfo.hpp"
+// #include "storage/StorageBlockInfo.hpp"
 #include "types/TypedValue.hpp"
 #include "utility/Macros.hpp"
 
@@ -130,8 +130,8 @@ class ScalarCaseExpression : public Scalar {
     }
   }
 
-  ColumnVector* getAllValues(ValueAccessor *accessor,
-                             const SubBlocksReference *sub_blocks_ref) const override;
+  ColumnVector* getAllValues(ValueAccessor *accessor) const override;
+                             // const SubBlocksReference *sub_blocks_ref) const override;
 
   ColumnVector* getAllValuesForJoin(
       const relation_id left_relation_id,

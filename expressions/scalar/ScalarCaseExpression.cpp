@@ -22,17 +22,20 @@
 #include <utility>
 #include <vector>
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
 #include "expressions/predicate/Predicate.hpp"
 #include "expressions/scalar/Scalar.hpp"
-#include "storage/TupleIdSequence.hpp"
-#include "storage/ValueAccessor.hpp"
-#include "storage/ValueAccessorUtil.hpp"
+// #include "storage/TupleIdSequence.hpp"
+// #include "storage/ValueAccessor.hpp"
+// #include "storage/ValueAccessorUtil.hpp"
 #include "types/Type.hpp"
 #include "types/Type.pb.h"
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
+#include "types/containers/ValueAccessor.hpp"
+#include "types/containers/ValueAccessorUtil.hpp"
 
 #include "glog/logging.h"
 
@@ -192,8 +195,8 @@ TypedValue ScalarCaseExpression::getValueForJoinedTuples(
 }
 
 ColumnVector* ScalarCaseExpression::getAllValues(
-    ValueAccessor *accessor,
-    const SubBlocksReference *sub_blocks_ref) const {
+    ValueAccessor *accessor) const {
+    // const SubBlocksReference *sub_blocks_ref) const {
   return InvokeOnValueAccessorMaybeTupleIdSequenceAdapter(
       accessor,
       [&](auto *accessor) -> ColumnVector* {  // NOLINT(build/c++11)
@@ -202,7 +205,7 @@ ColumnVector* ScalarCaseExpression::getAllValues(
                                              static_value_,
                                              accessor->getNumTuples());
     } else if (fixed_result_expression_ != nullptr) {
-      return fixed_result_expression_->getAllValues(accessor, sub_blocks_ref);
+      return fixed_result_expression_->getAllValues(accessor);
     }
 
     const TupleIdSequence *accessor_sequence = accessor->getTupleIdSequence();
@@ -229,7 +232,7 @@ ColumnVector* ScalarCaseExpression::getAllValues(
 
       case_matches.emplace_back(when_predicates_[case_idx]->getAllMatches(
           accessor,
-          sub_blocks_ref,
+          // sub_blocks_ref,
           else_matches.get(),
           accessor_sequence));
       else_matches->intersectWithComplement(*case_matches.back());
@@ -243,14 +246,14 @@ ColumnVector* ScalarCaseExpression::getAllValues(
       std::unique_ptr<ValueAccessor> case_accessor(
           accessor->createSharedTupleIdSequenceAdapter(*case_matches[case_idx]));
       case_results.emplace_back(
-          result_expressions_[case_idx]->getAllValues(case_accessor.get(), sub_blocks_ref));
+          result_expressions_[case_idx]->getAllValues(case_accessor.get()));
     }
 
     std::unique_ptr<ColumnVector> else_results;
     if (!else_matches->empty()) {
       std::unique_ptr<ValueAccessor> else_accessor(
           accessor->createSharedTupleIdSequenceAdapter(*else_matches));
-      else_results.reset(else_result_expression_->getAllValues(else_accessor.get(), sub_blocks_ref));
+      else_results.reset(else_result_expression_->getAllValues(else_accessor.get()));
     }
 
     // Multiplex per-case results into a single ColumnVector with values in the
