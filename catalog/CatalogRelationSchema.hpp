@@ -17,6 +17,10 @@
  *   limitations under the License.
  **/
 
+/**
+ * Changes: Move constructor from "protected" to "public".
+ **/
+
 #ifndef QUICKSTEP_CATALOG_CATALOG_RELATION_SCHEMA_HPP_
 #define QUICKSTEP_CATALOG_CATALOG_RELATION_SCHEMA_HPP_
 
@@ -52,6 +56,37 @@ class CatalogRelationSchema {
  public:
   typedef std::unordered_map<std::string, CatalogAttribute*>::size_type size_type;
   typedef PtrVector<CatalogAttribute, true>::const_skip_iterator const_iterator;
+
+  /**
+   * @brief Create a new relation.
+   *
+   * @param parent The database this relation belongs to.
+   * @param name This relation's name.
+   * @param id This relation's ID (defaults to -1, which means invalid/unset).
+   * @param temporary Whether this relation is temporary (stores an
+   *        intermediate result during query processing).
+   **/
+  CatalogRelationSchema(CatalogDatabase* parent,
+                        const std::string &name,
+                        const relation_id id = -1,
+                        const bool temporary = false)
+      : parent_(parent),
+        id_(id),
+        name_(name),
+        temporary_(temporary),
+        num_nullable_attributes_(0),
+        num_variable_length_attributes_(0),
+        max_byte_length_(0),
+        min_byte_length_(0),
+        estimated_byte_length_(0),
+        fixed_byte_length_(0),
+        max_variable_byte_length_(0),
+        min_variable_byte_length_(0),
+        min_variable_byte_length_excluding_nullable_(0),
+        estimated_variable_byte_length_(0),
+        current_nullable_attribute_index_(-1),
+        current_variable_length_attribute_index_(-1) {
+  }
 
   /**
    * @brief Reconstruct a relation schema from its serialized Protocol Buffer
@@ -429,37 +464,6 @@ class CatalogRelationSchema {
   }
 
  protected:
-  /**
-   * @brief Create a new relation.
-   *
-   * @param parent The database this relation belongs to.
-   * @param name This relation's name.
-   * @param id This relation's ID (defaults to -1, which means invalid/unset).
-   * @param temporary Whether this relation is temporary (stores an
-   *        intermediate result during query processing).
-   **/
-  CatalogRelationSchema(CatalogDatabase* parent,
-                        const std::string &name,
-                        const relation_id id = -1,
-                        const bool temporary = false)
-      : parent_(parent),
-        id_(id),
-        name_(name),
-        temporary_(temporary),
-        num_nullable_attributes_(0),
-        num_variable_length_attributes_(0),
-        max_byte_length_(0),
-        min_byte_length_(0),
-        estimated_byte_length_(0),
-        fixed_byte_length_(0),
-        max_variable_byte_length_(0),
-        min_variable_byte_length_(0),
-        min_variable_byte_length_excluding_nullable_(0),
-        estimated_variable_byte_length_(0),
-        current_nullable_attribute_index_(-1),
-        current_variable_length_attribute_index_(-1) {
-  }
-
   /**
    * @brief Set the parent CatalogDatabase of this relation. Used by
    *        CatalogDatabase (a friend of this class) when adding a new

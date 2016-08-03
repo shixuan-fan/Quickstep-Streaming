@@ -18,10 +18,11 @@
 #ifndef QUICKSTEP_EXPRESSIONS_PREDICATE_TRIVIAL_PREDICATES_HPP_
 #define QUICKSTEP_EXPRESSIONS_PREDICATE_TRIVIAL_PREDICATES_HPP_
 
-#include "catalog/CatalogTypedefs.hpp"
+#include "basics/Common.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
 #include "expressions/predicate/Predicate.hpp"
-#include "storage/StorageBlockInfo.hpp"
+// #include "storage/StorageBlockInfo.hpp"
 #include "utility/Macros.hpp"
 
 namespace quickstep {
@@ -91,7 +92,7 @@ class TruePredicate : public TrivialPredicate {
   }
 
   TupleIdSequence* getAllMatches(ValueAccessor *accessor,
-                                 const SubBlocksReference *sub_blocks_ref,
+                                 // const SubBlocksReference *sub_blocks_ref,
                                  const TupleIdSequence *filter,
                                  const TupleIdSequence *existence_map) const override {
     return GenerateSequenceForStaticResult(accessor, filter, existence_map, true);
@@ -144,7 +145,7 @@ class FalsePredicate : public TrivialPredicate {
   }
 
   TupleIdSequence* getAllMatches(ValueAccessor *accessor,
-                                 const SubBlocksReference *sub_blocks_ref,
+                                 // const SubBlocksReference *sub_blocks_ref,
                                  const TupleIdSequence *filter,
                                  const TupleIdSequence *existence_map) const override {
     return GenerateSequenceForStaticResult(accessor, filter, existence_map, false);

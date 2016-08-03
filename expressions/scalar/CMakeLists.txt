@@ -33,30 +33,30 @@ add_library(quickstep_expressions_scalar_ScalarUnaryExpression
 
 # Link dependencies:
 target_link_libraries(quickstep_expressions_scalar_Scalar
-                      quickstep_catalog_CatalogTypedefs
+#                       quickstep_catalog_CatalogTypedefs
                       quickstep_expressions_Expressions_proto
-                      quickstep_storage_StorageBlockInfo
+#                       quickstep_storage_StorageBlockInfo
                       quickstep_types_TypedValue
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_expressions_scalar_ScalarAttribute
                       quickstep_catalog_CatalogAttribute
                       quickstep_catalog_CatalogRelationSchema
-                      quickstep_catalog_CatalogTypedefs
+#                       quickstep_catalog_CatalogTypedefs
                       quickstep_expressions_Expressions_proto
                       quickstep_expressions_scalar_Scalar
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                       quickstep_storage_StorageBlockInfo
+#                       quickstep_storage_ValueAccessor
+#                       quickstep_storage_ValueAccessorUtil
                       quickstep_types_Type
                       quickstep_types_TypedValue
                       quickstep_types_containers_ColumnVector
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_expressions_scalar_ScalarBinaryExpression
-                      quickstep_catalog_CatalogTypedefs
+#                       quickstep_catalog_CatalogTypedefs
                       quickstep_expressions_Expressions_proto
                       quickstep_expressions_scalar_Scalar
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_ValueAccessor
+#                       quickstep_storage_StorageBlockInfo
+#                       quickstep_storage_ValueAccessor
                       quickstep_types_Type
                       quickstep_types_TypeErrors
                       quickstep_types_TypedValue
@@ -65,25 +65,25 @@ target_link_libraries(quickstep_expressions_scalar_ScalarBinaryExpression
                       quickstep_types_operations_binaryoperations_BinaryOperation
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_expressions_scalar_ScalarCaseExpression
-                      quickstep_catalog_CatalogTypedefs
+#                       quickstep_catalog_CatalogTypedefs
                       quickstep_expressions_Expressions_proto
                       quickstep_expressions_predicate_Predicate
                       quickstep_expressions_scalar_Scalar
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_TupleIdSequence
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                       quickstep_storage_StorageBlockInfo
+#                       quickstep_storage_TupleIdSequence
+#                       quickstep_storage_ValueAccessor
+#                       quickstep_storage_ValueAccessorUtil
                       quickstep_types_Type
                       quickstep_types_Type_proto
                       quickstep_types_TypedValue
                       quickstep_types_containers_ColumnVector
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_expressions_scalar_ScalarLiteral
-                      quickstep_catalog_CatalogTypedefs
+#                       quickstep_catalog_CatalogTypedefs
                       quickstep_expressions_Expressions_proto
                       quickstep_expressions_scalar_Scalar
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_ValueAccessor
+#                       quickstep_storage_StorageBlockInfo
+#                       quickstep_storage_ValueAccessor
                       quickstep_types_Type
                       quickstep_types_Type_proto
                       quickstep_types_TypedValue
@@ -91,11 +91,11 @@ target_link_libraries(quickstep_expressions_scalar_ScalarLiteral
                       quickstep_types_containers_ColumnVector
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_expressions_scalar_ScalarUnaryExpression
-                      quickstep_catalog_CatalogTypedefs
+#                       quickstep_catalog_CatalogTypedefs
                       quickstep_expressions_Expressions_proto
                       quickstep_expressions_scalar_Scalar
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_ValueAccessor
+#                      quickstep_storage_StorageBlockInfo
+#                      quickstep_storage_ValueAccessor
                       quickstep_types_Type
                       quickstep_types_TypeErrors
                       quickstep_types_TypedValue
@@ -121,7 +121,7 @@ target_link_libraries(ScalarCaseExpression_unittest
                       gtest
                       gtest_main
                       quickstep_catalog_CatalogAttribute
-                      quickstep_catalog_CatalogRelation
+#                       quickstep_catalog_CatalogRelation
                       quickstep_catalog_CatalogRelationSchema
                       quickstep_expressions_predicate_ComparisonPredicate
                       quickstep_expressions_predicate_ConjunctionPredicate
@@ -133,9 +133,9 @@ target_link_libraries(ScalarCaseExpression_unittest
                       quickstep_expressions_scalar_ScalarCaseExpression
                       quickstep_expressions_scalar_ScalarLiteral
                       quickstep_expressions_scalar_ScalarUnaryExpression
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_TupleIdSequence
-                      quickstep_storage_ValueAccessor
+#                       quickstep_storage_StorageBlockInfo
+#                       quickstep_storage_TupleIdSequence
+#                       quickstep_storage_ValueAccessor
                       quickstep_types_TypeFactory
                       quickstep_types_TypeID
                       quickstep_types_TypedValue
@@ -155,7 +155,7 @@ target_link_libraries(Scalar_unittest
                       gtest_main
                       quickstep_catalog_CatalogAttribute
                       quickstep_catalog_CatalogDatabase
-                      quickstep_catalog_CatalogRelation
+#                       quickstep_catalog_CatalogRelation
                       quickstep_expressions_ExpressionFactories
                       quickstep_expressions_scalar_Scalar
                       quickstep_expressions_scalar_ScalarAttribute

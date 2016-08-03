@@ -26,7 +26,7 @@
 #include <utility>
 #include <vector>
 
-#include "storage/StorageBlockInfo.hpp"
+// #include "storage/StorageBlockInfo.hpp"
 #endif  // QUICKSTEP_ENABLE_VECTOR_COPY_ELISION_JOIN
 
 #include "basics/Common.hpp"
@@ -37,6 +37,8 @@
 #include "types/TypeID.hpp"
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
+#include "types/containers/ValueAccessor.hpp"
+#include "types/containers/ValueAccessorUtil.hpp"
 #include "types/operations/Operation.pb.h"
 #include "utility/Macros.hpp"
 

@@ -22,9 +22,11 @@
 #include <utility>
 #include <vector>
 
+#include "basics/Common.hpp"
 #include "catalog/CatalogAttribute.hpp"
-#include "catalog/CatalogRelation.hpp"
+// #include "catalog/CatalogRelation.hpp"
 #include "catalog/CatalogRelationSchema.hpp"
+#include "common/TupleIdSequence.hpp"
 #include "expressions/predicate/ComparisonPredicate.hpp"
 #include "expressions/predicate/ConjunctionPredicate.hpp"
 #include "expressions/predicate/DisjunctionPredicate.hpp"
@@ -35,14 +37,15 @@
 #include "expressions/scalar/ScalarCaseExpression.hpp"
 #include "expressions/scalar/ScalarLiteral.hpp"
 #include "expressions/scalar/ScalarUnaryExpression.hpp"
-#include "storage/StorageBlockInfo.hpp"
-#include "storage/TupleIdSequence.hpp"
-#include "storage/ValueAccessor.hpp"
+// #include "storage/StorageBlockInfo.hpp"
+// #include "storage/TupleIdSequence.hpp"
+// #include "storage/ValueAccessor.hpp"
 #include "types/TypeFactory.hpp"
 #include "types/TypeID.hpp"
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
 #include "types/containers/ColumnVectorsValueAccessor.hpp"
+#include "types/containers/ValueAccessor.hpp"
 #include "types/operations/binary_operations/BinaryOperationFactory.hpp"
 #include "types/operations/binary_operations/BinaryOperationID.hpp"
 #include "types/operations/comparisons/ComparisonFactory.hpp"
@@ -67,7 +70,7 @@ class ScalarCaseExpressionTest : public ::testing::Test {
   static constexpr std::size_t kNumSampleTuples = 1000;
 
   virtual void SetUp() {
-    sample_relation_.reset(new CatalogRelation(nullptr, "sample", 0));
+    sample_relation_.reset(new CatalogRelationSchema(nullptr, "sample", 0));
     sample_relation_->addAttribute(new CatalogAttribute(
         sample_relation_.get(),
         "int_attr",
@@ -124,7 +127,7 @@ class ScalarCaseExpressionTest : public ::testing::Test {
     sample_data_value_accessor_.addColumn(varchar_column.release());
   }
 
-  std::unique_ptr<CatalogRelation> sample_relation_;
+  std::unique_ptr<CatalogRelationSchema> sample_relation_;
   ColumnVectorsValueAccessor sample_data_value_accessor_;
 };
 
@@ -222,7 +225,7 @@ TEST_F(ScalarCaseExpressionTest, BasicComparisonAndLiteralTest) {
                         varchar_type));
 
   std::unique_ptr<ColumnVector> result_cv(
-      case_expr.getAllValues(&sample_data_value_accessor_, nullptr));
+      case_expr.getAllValues(&sample_data_value_accessor_));
   ASSERT_FALSE(result_cv->isNative());
   const IndirectColumnVector &indirect_result_cv
       = static_cast<const IndirectColumnVector&>(*result_cv);
@@ -307,7 +310,7 @@ TEST_F(ScalarCaseExpressionTest, BasicComparisonAndLiteralWithFilteredInputTest)
                         varchar_type));
 
   std::unique_ptr<ColumnVector> result_cv(
-      case_expr.getAllValues(filtered_accessor.get(), nullptr));
+      case_expr.getAllValues(filtered_accessor.get()));
   ASSERT_FALSE(result_cv->isNative());
   const IndirectColumnVector &indirect_result_cv
       = static_cast<const IndirectColumnVector&>(*result_cv);
@@ -379,7 +382,7 @@ TEST_F(ScalarCaseExpressionTest, WhenClauseOrderTest) {
                         varchar_type));
 
   std::unique_ptr<ColumnVector> result_cv(
-      case_expr.getAllValues(&sample_data_value_accessor_, nullptr));
+      case_expr.getAllValues(&sample_data_value_accessor_));
   ASSERT_FALSE(result_cv->isNative());
   const IndirectColumnVector &indirect_result_cv
       = static_cast<const IndirectColumnVector&>(*result_cv);
@@ -473,7 +476,7 @@ TEST_F(ScalarCaseExpressionTest, ComplexConjunctionAndCalculatedExpressionTest) 
           new ScalarAttribute(*sample_relation_->getAttributeById(0))));
 
   std::unique_ptr<ColumnVector> result_cv(
-      case_expr.getAllValues(&sample_data_value_accessor_, nullptr));
+      case_expr.getAllValues(&sample_data_value_accessor_));
   ASSERT_TRUE(result_cv->isNative());
   const NativeColumnVector &native_result_cv
       = static_cast<const NativeColumnVector&>(*result_cv);
@@ -596,7 +599,7 @@ TEST_F(ScalarCaseExpressionTest,
           new ScalarAttribute(*sample_relation_->getAttributeById(0))));
 
   std::unique_ptr<ColumnVector> result_cv(
-      case_expr.getAllValues(filtered_accessor.get(), nullptr));
+      case_expr.getAllValues(filtered_accessor.get()));
   ASSERT_TRUE(result_cv->isNative());
   const NativeColumnVector &native_result_cv
       = static_cast<const NativeColumnVector&>(*result_cv);
@@ -706,7 +709,7 @@ TEST_F(ScalarCaseExpressionTest, ComplexDisjunctionAndCalculatedExpressionTest) 
           new ScalarAttribute(*sample_relation_->getAttributeById(0))));
 
   std::unique_ptr<ColumnVector> result_cv(
-      case_expr.getAllValues(&sample_data_value_accessor_, nullptr));
+      case_expr.getAllValues(&sample_data_value_accessor_));
   ASSERT_TRUE(result_cv->isNative());
   const NativeColumnVector &native_result_cv
       = static_cast<const NativeColumnVector&>(*result_cv);
@@ -826,7 +829,7 @@ TEST_F(ScalarCaseExpressionTest,
           new ScalarAttribute(*sample_relation_->getAttributeById(0))));
 
   std::unique_ptr<ColumnVector> result_cv(
-      case_expr.getAllValues(filtered_accessor.get(), nullptr));
+      case_expr.getAllValues(filtered_accessor.get()));
   ASSERT_TRUE(result_cv->isNative());
   const NativeColumnVector &native_result_cv
       = static_cast<const NativeColumnVector&>(*result_cv);
@@ -865,7 +868,7 @@ TEST_F(ScalarCaseExpressionTest,
 // expressions referencing attributes in both relations.
 TEST_F(ScalarCaseExpressionTest, JoinTest) {
   // Simulate a join with another relation.
-  CatalogRelation other_relation(nullptr, "other", 1);
+  CatalogRelationSchema other_relation(nullptr, "other", 1);
   other_relation.addAttribute(new CatalogAttribute(&other_relation,
                                                    "other_double",
                                                    TypeFactory::GetType(kDouble, false)));

@@ -16,7 +16,7 @@
 
 #include "utility/CalculateInstalledMemory.hpp"
 #include "utility/UtilityConfig.h"
-#include "config/heron-config.h"
+// #include "config/heron-config.h"
 
 #if defined(QUICKSTEP_HAVE_SYSCONF) || defined(IS_MACOSX)
 #include <unistd.h>
@@ -25,6 +25,8 @@
 #elif defined(QUICKSTEP_HAVE_WINDOWS)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#else
+#include <sys/sysinfo.h>
 #endif
 
 #include "glog/logging.h"
@@ -34,9 +36,14 @@ namespace utility {
 namespace system {
 
 std::uint64_t get_phys_pages() {
-    uint64_t mem;
-    size_t len = sizeof(mem);
-    sysctlbyname("hw.memsize", &mem, &len, NULL, 0);
+    uint64_t mem = 1024 * 1024 * 512;
+#if defined(QUICKSTEP_HAVE_SYSCONF) || defined(IS_MACOSX)
+    // The following lines are commented because they cannot be compiled on Ubuntu.
+    // size_t len = sizeof(mem);
+    // sysctlbyname("hw.memsize", &mem, &len, NULL, 0);
+#else
+    mem = sysinfo().freeram;
+#endif
     static unsigned phys_pages = mem/sysconf(_SC_PAGE_SIZE);
     return phys_pages;
 }
@@ -64,8 +71,11 @@ bool calculateTotalMemoryInBytes(std::uint64_t *total_memory) {
   LOG(INFO) << "Could not compute the total installed memory using GlobalMemoryStatusEx\n";
   return false;
 #else
+  // A quickfix for Ubuntu.
+  *total_memory = 1024 * 1024 * 512;  // Bytes.
+  return true;
 // TODO(jmp): Expand to find other ways to calculate the installed memory.
-#error "No implementation available to calculate the total installed memory."
+// #error "No implementation available to calculate the total installed memory."
 #endif
 }
 

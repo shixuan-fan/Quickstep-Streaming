@@ -28,7 +28,7 @@
 
 #include "catalog/CatalogAttribute.hpp"
 #include "catalog/CatalogDatabase.hpp"
-#include "catalog/CatalogRelation.hpp"
+// #include "catalog/CatalogRelation.hpp"
 #include "expressions/ExpressionFactories.hpp"
 #include "expressions/scalar/Scalar.hpp"
 #include "expressions/scalar/ScalarAttribute.hpp"
@@ -156,11 +156,11 @@ class ScalarTest : public ::testing::Test {
                                createScalarDouble(static_cast<double>(-3.14))));
   }
 
-  CatalogRelation* createCatalogRelation(const std::string &name) {
-    return database_->getRelationByIdMutable(database_->addRelation(new CatalogRelation(NULL, name)));
+  CatalogRelationSchema* createCatalogRelation(const std::string &name) {
+    return database_->getRelationByIdMutable(database_->addRelation(new CatalogRelationSchema(NULL, name)));
   }
 
-  const CatalogAttribute* createCatalogAttribute(CatalogRelation* rel, const std::string &name, const Type &type) {
+  const CatalogAttribute* createCatalogAttribute(CatalogRelationSchema* rel, const std::string &name, const Type &type) {
     rel->addAttribute(new CatalogAttribute(NULL, name, type));
     return rel->getAttributeByName(name);
   }
@@ -283,7 +283,7 @@ class ScalarTest : public ::testing::Test {
 
   unique_ptr<CatalogDatabase> database_;
   // Both pointers below are owned by database_.
-  CatalogRelation *rel_numeric_, *rel_date_, *rel_string_;
+  CatalogRelationSchema *rel_numeric_, *rel_date_, *rel_string_;
   // All pointers below are owned by relations.
   const CatalogAttribute *attr_int_, *attr_long_, *attr_float_, *attr_double_,
       *attr_datetime_, *attr_datetime_interval_, *attr_year_month_interval_,

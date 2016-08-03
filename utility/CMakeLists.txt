@@ -17,6 +17,7 @@
 # 1. Removed all tests.
 # 2. Removed dependencies for ripped libraries.
 # 3. Removed Benchmarks.
+# 4. Removed PlanVisualizer.
 
 include(CheckCXXSourceCompiles)
 
@@ -176,7 +177,7 @@ add_library(quickstep_utility_Glob Glob.cpp Glob.hpp)
 add_library(quickstep_utility_HashPair ../empty_src.cpp HashPair.hpp)
 add_library(quickstep_utility_Macros ../empty_src.cpp Macros.hpp)
 add_library(quickstep_utility_MemStream ../empty_src.cpp MemStream.hpp)
-add_library(quickstep_utility_PlanVisualizer PlanVisualizer.cpp PlanVisualizer.hpp)
+# add_library(quickstep_utility_PlanVisualizer PlanVisualizer.cpp PlanVisualizer.hpp)
 add_library(quickstep_utility_PrimeNumber PrimeNumber.cpp PrimeNumber.hpp)
 add_library(quickstep_utility_PtrList ../empty_src.cpp PtrList.hpp)
 add_library(quickstep_utility_PtrMap ../empty_src.cpp PtrMap.hpp)
@@ -215,7 +216,7 @@ target_link_libraries(quickstep_utility_BitVector
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_utility_BloomFilter
                       glog
-                      quickstep_storage_StorageConstants
+#                      quickstep_storage_StorageConstants
 #                      quickstep_threading_Mutex
 #                      quickstep_threading_SharedMutex
 #                      quickstep_threading_SpinSharedMutex
@@ -237,17 +238,6 @@ target_link_libraries(quickstep_utility_MemStream
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_utility_PrimeNumber
                       glog)
-target_link_libraries(quickstep_utility_PlanVisualizer
-                      quickstep_catalog_CatalogRelation
-#                      quickstep_queryoptimizer_costmodel_StarSchemaSimpleCostModel
-#                      quickstep_queryoptimizer_expressions_AttributeReference
-#                      quickstep_queryoptimizer_physical_HashJoin
-#                      quickstep_queryoptimizer_physical_Physical
-#                      quickstep_queryoptimizer_physical_PhysicalType
-#                      quickstep_queryoptimizer_physical_TableReference
-#                      quickstep_queryoptimizer_physical_TopLevelPlan
-                      quickstep_utility_Macros
-                      quickstep_utility_StringUtil)
 target_link_libraries(quickstep_utility_PtrList
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_utility_PtrMap
@@ -274,7 +264,7 @@ target_link_libraries(quickstep_utility_SortConfiguration_proto
                       quickstep_expressions_Expressions_proto
                       ${PROTOBUF_LIBRARY})
 target_link_libraries(quickstep_utility_ShardedLockManager
-                      quickstep_storage_StorageConstants
+#                      quickstep_storage_StorageConstants
 #                      quickstep_threading_Mutex
 #                      quickstep_threading_SharedMutex
 #                      quickstep_threading_SpinSharedMutex
@@ -312,7 +302,7 @@ target_link_libraries(quickstep_utility
                       quickstep_utility_HashPair
                       quickstep_utility_Macros
                       quickstep_utility_MemStream
-                      quickstep_utility_PlanVisualizer
+#                       quickstep_utility_PlanVisualizer
                       quickstep_utility_PrimeNumber
                       quickstep_utility_PtrList
                       quickstep_utility_PtrMap

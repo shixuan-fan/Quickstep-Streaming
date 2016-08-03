@@ -22,9 +22,10 @@
 #include <utility>
 #include <vector>
 
+#include "basics/Common.hpp"
 #include "catalog/CatalogDatabaseLite.hpp"
 #include "catalog/CatalogRelationSchema.hpp"
-#include "catalog/CatalogTypedefs.hpp"
+// #include "catalog/CatalogTypedefs.hpp"
 #include "expressions/Expressions.pb.h"
 #include "expressions/predicate/ComparisonPredicate.hpp"
 #include "expressions/predicate/ConjunctionPredicate.hpp"

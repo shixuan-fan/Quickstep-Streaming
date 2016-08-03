@@ -355,7 +355,7 @@ target_link_libraries(quickstep_threading_Thread
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_threading_ThreadIDBasedMap
                       glog
-                      quickstep_storage_StorageConstants
+#                      quickstep_storage_StorageConstants
                       quickstep_threading_Mutex
                       quickstep_threading_SharedMutex
                       quickstep_threading_SpinSharedMutex

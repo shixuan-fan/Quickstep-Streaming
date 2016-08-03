@@ -83,17 +83,17 @@ target_link_libraries(quickstep_types_operations_binaryoperations_ArithmeticBina
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_types_operations_binaryoperations_ArithmeticBinaryOperators
                       glog
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                       quickstep_catalog_CatalogTypedefs
+#                       quickstep_storage_StorageBlockInfo
+#                       quickstep_storage_ValueAccessor
+#                       quickstep_storage_ValueAccessorUtil
                       quickstep_types_TypedValue
                       quickstep_types_containers_ColumnVector
                       quickstep_types_operations_binaryoperations_BinaryOperation
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_types_operations_binaryoperations_BinaryOperation
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_StorageBlockInfo
+#                       quickstep_catalog_CatalogTypedefs
+#                       quickstep_storage_StorageBlockInfo
                       quickstep_types_TypedValue
                       quickstep_types_operations_Operation
                       quickstep_types_operations_Operation_proto

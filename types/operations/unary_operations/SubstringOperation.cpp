@@ -28,6 +28,8 @@
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
 #include "types/containers/ColumnVectorUtil.hpp"
+#include "types/containers/ValueAccessor.hpp"
+#include "types/containers/ValueAccessorUtil.hpp"
 #include "types/operations/Operation.pb.h"
 #include "types/port/strnlen.hpp"
 #include "utility/TemplateUtil.hpp"

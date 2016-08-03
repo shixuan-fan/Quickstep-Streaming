@@ -52,10 +52,10 @@ add_library(quickstep_types_operations_comparisons_PatternMatchingComparison
 # Link dependencies:
 target_link_libraries(quickstep_types_operations_comparisons_AsciiStringComparators
                       glog
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_TupleIdSequence
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                       quickstep_catalog_CatalogTypedefs
+#                       quickstep_storage_TupleIdSequence
+#                       quickstep_storage_ValueAccessor
+#                       quickstep_storage_ValueAccessorUtil
                       quickstep_types_TypedValue
                       quickstep_types_containers_ColumnVector
                       quickstep_types_containers_ColumnVectorUtil
@@ -75,10 +75,10 @@ target_link_libraries(quickstep_types_operations_comparisons_BasicComparison
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_types_operations_comparisons_Comparison
                       glog
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_TupleIdSequence
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_storage_TupleIdSequence
+#                      quickstep_storage_ValueAccessor
+#                      quickstep_storage_ValueAccessorUtil
                       quickstep_types_TypedValue
                       quickstep_types_containers_ColumnVector
                       quickstep_types_containers_ColumnVectorUtil
@@ -102,7 +102,7 @@ target_link_libraries(quickstep_types_operations_comparisons_ComparisonID
                       glog)
 target_link_libraries(quickstep_types_operations_comparisons_ComparisonUtil
                       glog
-                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_catalog_CatalogTypedefs
                       quickstep_types_DatetimeLit
                       quickstep_types_IntervalLit
                       quickstep_types_Type
@@ -146,10 +146,10 @@ target_link_libraries(quickstep_types_operations_comparisons_LessOrEqualComparis
                       quickstep_types_operations_comparisons_LiteralComparators
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_types_operations_comparisons_LiteralComparators
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_TupleIdSequence
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_storage_TupleIdSequence
+#                      quickstep_storage_ValueAccessor
+#                      quickstep_storage_ValueAccessorUtil
                       quickstep_types_TypedValue
                       quickstep_types_containers_ColumnVector
                       quickstep_types_operations_comparisons_Comparison)
@@ -161,10 +161,10 @@ target_link_libraries(quickstep_types_operations_comparisons_NotEqualComparison
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_types_operations_comparisons_PatternMatchingComparators
                       glog
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_TupleIdSequence
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_storage_TupleIdSequence
+#                      quickstep_storage_ValueAccessor
+#                      quickstep_storage_ValueAccessorUtil
                       quickstep_types_TypedValue
                       quickstep_types_containers_ColumnVector
                       quickstep_types_containers_ColumnVectorUtil

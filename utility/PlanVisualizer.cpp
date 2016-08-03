@@ -26,13 +26,13 @@
 
 #include "catalog/CatalogRelation.hpp"
 
-#include "query_optimizer/cost_model/StarSchemaSimpleCostModel.hpp"
-#include "query_optimizer/expressions/AttributeReference.hpp"
-#include "query_optimizer/physical/HashJoin.hpp"
-#include "query_optimizer/physical/Physical.hpp"
-#include "query_optimizer/physical/PhysicalType.hpp"
-#include "query_optimizer/physical/TableReference.hpp"
-#include "query_optimizer/physical/TopLevelPlan.hpp"
+// #include "query_optimizer/cost_model/StarSchemaSimpleCostModel.hpp"
+// #include "query_optimizer/expressions/AttributeReference.hpp"
+// #include "query_optimizer/physical/HashJoin.hpp"
+// #include "query_optimizer/physical/Physical.hpp"
+// #include "query_optimizer/physical/PhysicalType.hpp"
+// #include "query_optimizer/physical/TableReference.hpp"
+// #include "query_optimizer/physical/TopLevelPlan.hpp"
 #include "utility/StringUtil.hpp"
 
 #include "glog/logging.h"

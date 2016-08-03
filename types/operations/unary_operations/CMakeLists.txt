@@ -45,20 +45,20 @@ target_link_libraries(quickstep_types_operations_unaryoperations_ArithmeticUnary
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_types_operations_unaryoperations_ArithmeticUnaryOperators
                       glog
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_storage_StorageBlockInfo
+#                      quickstep_storage_ValueAccessor
+#                      quickstep_storage_ValueAccessorUtil
                       quickstep_types_TypedValue
                       quickstep_types_containers_ColumnVector
                       quickstep_types_operations_unaryoperations_UnaryOperation
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_types_operations_unaryoperations_DateExtractOperation
                       glog
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_StorageBlockInfo
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_storage_StorageBlockInfo
+#                      quickstep_storage_ValueAccessor
+#                      quickstep_storage_ValueAccessorUtil
                       quickstep_types_DatetimeLit
                       quickstep_types_LongType
                       quickstep_types_Type
@@ -72,9 +72,9 @@ target_link_libraries(quickstep_types_operations_unaryoperations_DateExtractOper
                       quickstep_utility_Macros)
 target_link_libraries(quickstep_types_operations_unaryoperations_NumericCastOperation
                       glog
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_storage_ValueAccessor
+#                      quickstep_storage_ValueAccessorUtil
                       quickstep_types_DoubleType
                       quickstep_types_FloatType
                       quickstep_types_IntType
@@ -89,9 +89,9 @@ target_link_libraries(quickstep_types_operations_unaryoperations_NumericCastOper
                       quickstep_utility_Macros
                       quickstep_utility_PtrMap)
 target_link_libraries(quickstep_types_operations_unaryoperations_SubstringOperation
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_ValueAccessor
-                      quickstep_storage_ValueAccessorUtil
+#                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_storage_ValueAccessor
+#                      quickstep_storage_ValueAccessorUtil
                       quickstep_types_Type
                       quickstep_types_TypeFactory
                       quickstep_types_TypeID
@@ -106,8 +106,8 @@ target_link_libraries(quickstep_types_operations_unaryoperations_SubstringOperat
                       quickstep_utility_Macros
                       quickstep_utility_TemplateUtil)
 target_link_libraries(quickstep_types_operations_unaryoperations_UnaryOperation
-                      quickstep_catalog_CatalogTypedefs
-                      quickstep_storage_StorageBlockInfo
+#                      quickstep_catalog_CatalogTypedefs
+#                      quickstep_storage_StorageBlockInfo
                       quickstep_types_TypedValue
                       quickstep_types_operations_Operation
                       quickstep_types_operations_Operation_proto
