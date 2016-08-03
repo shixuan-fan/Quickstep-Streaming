@@ -76,8 +76,8 @@ class StreamingOperator {
    * @return True if everything is okay, false if error encountered.
    * @note In the future, add exception handling.
    **/
-  virtual bool next(std::vector<TupleVectorValueAccessor> &inputs,
-                    std::vector<TupleVectorValueAccessor> &outputs) = 0;
+  virtual bool next(const std::vector<TupleVectorValueAccessor*> &inputs,
+                    std::vector<TupleVectorValueAccessor*> *outputs) = 0;
 
   /**
    * @brief Clean up.

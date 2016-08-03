@@ -50,21 +50,24 @@ class QuerySpec;
 class StreamingSelectOperator : public StreamingOperator {
  public:
   /**
+   * @brief Constructor.
+   **/
+  explicit StreamingSelectOperator(const std::size_t query_id)
+      : StreamingOperator(query_id) {}
+
+  /**
    * @brief Destructor.
    **/
   ~StreamingSelectOperator() override {}
 
   bool open(const QuerySpec *query_spec) override;
 
-  bool next(std::vector<TupleVectorValueAccessor> &inputs,
-            std::vector<TupleVectorValueAccessor> &outputs) override;
+  bool next(const std::vector<TupleVectorValueAccessor*> &inputs,
+            std::vector<TupleVectorValueAccessor*> *outputs) override;
 
   bool close() override;
     
  private:
-  explicit StreamingSelectOperator(const std::size_t query_id)
-      : StreamingOperator(query_id) {}
-
   std::unique_ptr<const SelectSpec> select_spec_;
            
   DISALLOW_COPY_AND_ASSIGN(StreamingSelectOperator);

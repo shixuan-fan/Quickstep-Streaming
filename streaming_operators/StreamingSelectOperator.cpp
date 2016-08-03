@@ -44,23 +44,23 @@ bool StreamingSelectOperator::open(const QuerySpec *plan_specs) {
 }
 
 bool StreamingSelectOperator::next(
-    std::vector<TupleVectorValueAccessor> &inputs,
-    std::vector<TupleVectorValueAccessor> &outputs) {
+    const std::vector<TupleVectorValueAccessor*> &inputs,
+    std::vector<TupleVectorValueAccessor*> *outputs) {
 
-  for (TupleVectorValueAccessor &input : inputs) {
-    ValueAccessor *accessor = &input;
+  for (TupleVectorValueAccessor *input : inputs) {
+    ValueAccessor *accessor = input;
     // Filter before selection.
     TupleIdSequence *filter_result = nullptr;
     for (const Predicate &predicate : select_spec_->predicates()) {
-      filter_result = predicate.getAllMatches(&input, filter_result, nullptr);
+      filter_result = predicate.getAllMatches(input, filter_result, nullptr);
     }
 
     if (filter_result != nullptr) {
-      accessor = input.createSharedTupleIdSequenceAdapter(*filter_result);
+      accessor = input->createSharedTupleIdSequenceAdapter(*filter_result);
     }
 
     // Selection.
-    TupleVectorValueAccessor output;
+    TupleVectorValueAccessor *output = new TupleVectorValueAccessor();
     // If all arguments are attributes, simply get values from inputs.
     if (select_spec_->simple_projection()) {
       InvokeOnValueAccessorMaybeTupleIdSequenceAdapter(
@@ -71,10 +71,10 @@ bool StreamingSelectOperator::next(
           std::vector<TypedValue> tuple;
           tuple.reserve(select_spec_->select_attributes().size());
           for (std::size_t i = 0; i < select_spec_->select_attributes().size(); i++) {
-            tuple.push_back(input.getTypedValue(select_spec_->select_attributes()[i]));
+            tuple.push_back(accessor->getTypedValue(select_spec_->select_attributes()[i]));
           }
 
-          output.addTuple(Tuple(std::move(tuple)));
+          output->addTuple(Tuple(std::move(tuple)));
         }
       });
     } else {
@@ -87,9 +87,11 @@ bool StreamingSelectOperator::next(
 
       arguments_accessor.beginIteration();
       while (arguments_accessor.next()) {
-        output.addTuple(std::move(*arguments_accessor.getTuple()));
+        output->addTuple(std::move(*arguments_accessor.getTuple()));
       }
     }
+
+    outputs->push_back(output);
   }
 
   return true;
