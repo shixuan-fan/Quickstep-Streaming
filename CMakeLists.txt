@@ -729,6 +729,7 @@ endif()
 # defines how to build that module's libraries.
 add_subdirectory(catalog)
 add_subdirectory(expressions)
+add_subdirectory(streaming_operators)
 add_subdirectory(threading)
 add_subdirectory(types)
 add_subdirectory(utility)

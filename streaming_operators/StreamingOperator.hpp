@@ -26,7 +26,6 @@
 // #include "storage/StorageBlockInfo.hpp"
 // #include "utility/Macros.hpp"
 // Notes (jmp): For the first version just define operators based on the TupleVector
-#include "catalog/CatalogDatabaseLite.hpp"
 #include "types/containers/TupleValueAccessor.hpp"
 
 #include "glog/logging.h"
@@ -100,13 +99,10 @@ class StreamingOperator {
    * @note May need some state for the query, at least a query id 
    *       for reporting.
    **/
-  StreamingOperator(const std::size_t query_id
-                    const CatalogDatabaseLite &database)
-      : query_id_(query_id),
-        database_(database) {}
+  explicit StreamingOperator(const std::size_t query_id)
+      : query_id_(query_id) {}
   
   const std::size_t query_id_;
-  const CatalogDatabaseLite &database_;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(StreamingOperator);
