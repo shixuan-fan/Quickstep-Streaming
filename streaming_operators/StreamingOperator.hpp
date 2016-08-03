@@ -26,7 +26,7 @@
 // #include "storage/StorageBlockInfo.hpp"
 // #include "utility/Macros.hpp"
 // Notes (jmp): For the first version just define operators based on the TupleVector
-#include "types/containers/TupleValueAccessor.hpp"
+#include "types/containers/TupleVectorValueAccessor.hpp"
 
 #include "glog/logging.h"
 
@@ -38,6 +38,8 @@ namespace quickstep {
 /** \addtogroup StreamingOperators
  *  @{
  */
+
+class QuerySpec;
 
 /**
  * @brief A streaming operator in a streaming query plan. The query plan is
@@ -56,13 +58,10 @@ class StreamingOperator {
    * @note Starting point. More parameter and create and call an opertor tree.
    * @param planSpecs A specification (JSON in the near future).
    *
-   * @return Whether the operator encountered errors. If the return value is
-   *         false, then there were no errors.
-   * TODO(Shixuan): Can we flip the return value? It is more intuitive that we
-   *                return true on success.
+   * @return True if everything is okay, false if error encountered.
    * @note In the future, add exception handling.
    **/
-  virtual bool open(const std::string planSpecs) {}
+  virtual bool open(const QuerySpec *query_spec) = 0;
 
   /**
    * @brief Process the tuples in the inputs and produce output.
@@ -74,23 +73,21 @@ class StreamingOperator {
    * @note         In generaly there are n-outputs too (for shared operators),
    *               though most plans/operators will have just one output.
    *
-   * @return Whether the operator encountered errors. If the return value is
-   *         false, then there were no errors.
+   * @return True if everything is okay, false if error encountered.
    * @note In the future, add exception handling.
    **/
-  virtual bool next(const std::vector<TupleVectorValueAccessor> &inputs,
-                    std::vector<TupleVectorValueAccessor> &outputs) {}
+  virtual bool next(std::vector<TupleVectorValueAccessor> &inputs,
+                    std::vector<TupleVectorValueAccessor> &outputs) = 0;
 
   /**
    * @brief Clean up.
    *
    * @note Starting point.
    *
-   * @return Whether the operator encountered errors. If the return value is
-   *         false, then there were no errors.
+   * @return True if everything is okay, false if error encountered.
    * @note In the future, add exception handling.
    **/
-  virtual bool close() {}
+  virtual bool close() = 0;
 
  protected:
   /**

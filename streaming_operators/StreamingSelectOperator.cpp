@@ -19,58 +19,70 @@
 #include <cstddef>
 #include <vector>
 
-#include "catalog/CatalogDatabaseLite.hpp"
+#include "query_specs/QuerySpec.hpp"
+#include "query_specs/QuerySpecType.hpp"
+#include "query_specs/SelectSpec.hpp"
 #include "types/containers/ColumnVector.hpp"
+#include "types/containers/ColumnVectorsValueAccessor.hpp"
 #include "types/containers/TupleVectorValueAccessor.hpp"
+#include "types/containers/ValueAccessor.hpp"
+#include "types/containers/ValueAccessorUtil.hpp"
 
 #include "glog/logging.h"
 
-bool StreamingSelectOperator::open(const serialization::QueryPlan plan_specs) {
-  // Error if the operator has not been closed or the query plan is invalid.
-  if (query_plan_.get() != nullptr ||
-      !QueryPlan::ProtoIsValid(plan_specs)) {
-    return true;
+namespace quickstep {
+
+bool StreamingSelectOperator::open(const QuerySpec *plan_specs) {
+  // Error if the operator has not been closed or the spec is not for select.
+  if (select_spec_.get() != nullptr ||
+      plan_specs->getQuerySpecType() != kSelectSpec) {
+    return false;
   }
 
-  query_plan_.reset(&QueryPlan::ReconstructFromProto(plan_specs, database_));
-  return false;
+  select_spec_.reset(static_cast<const SelectSpec*>(plan_specs));
+  return true;
 }
 
 bool StreamingSelectOperator::next(
-    const std::vector<TupleVectorValueAccessor> &inputs,
+    std::vector<TupleVectorValueAccessor> &inputs,
     std::vector<TupleVectorValueAccessor> &outputs) {
 
   for (TupleVectorValueAccessor &input : inputs) {
+    ValueAccessor *accessor = &input;
     // Filter before selection.
     TupleIdSequence *filter_result = nullptr;
-    for (const Predicate &predicate : query_plan_.predicates()) {
-      filter_result = predicate.getAllMatches(&input, nullptr, predicate, nullptr);
+    for (const Predicate &predicate : select_spec_->predicates()) {
+      filter_result = predicate.getAllMatches(&input, filter_result, nullptr);
     }
 
     if (filter_result != nullptr) {
-      TupleIdSequenceAdapterValueAccessor<TupleVectorValueAccessor>* filtered_accessor =
-          input.createSharedTupleIdSequenceAdapter(*filter_result);
+      accessor = input.createSharedTupleIdSequenceAdapter(*filter_result);
     }
 
     // Selection.
     TupleVectorValueAccessor output;
     // If all arguments are attributes, simply get values from inputs.
-    if (query_plan_.simple_projection()) {
-      filtered_accessor.beginIteration();
-      while (filtered_accessor.next()) {
-        std::vector<TypedValue> tuple;
-        tuple.reserve(query_plan_.simple_selection().size());
-        for (std::size_t i = 0; i < query_plan_.simple_selection().size(); i++) {
-          tuple.push_back(input.getTypedValue(query_plan_.simple_selection()[i]));
-        }
+    if (select_spec_->simple_projection()) {
+      InvokeOnValueAccessorMaybeTupleIdSequenceAdapter(
+          accessor,
+          [&](auto *accessor) -> void {
+        accessor->beginIteration();
+        while (accessor->next()) {
+          std::vector<TypedValue> tuple;
+          tuple.reserve(select_spec_->select_attributes().size());
+          for (std::size_t i = 0; i < select_spec_->select_attributes().size(); i++) {
+            tuple.push_back(input.getTypedValue(select_spec_->select_attributes()[i]));
+          }
 
-        output.addTuple(Tuple(std::move(tuple)));
-      }
+          output.addTuple(Tuple(std::move(tuple)));
+        }
+      });
     } else {
       // Calculate the value of arguments and iterate through them.
       ColumnVectorsValueAccessor arguments_accessor;
-      for (Scalar argument : query_plan_.arguments()) {
-        arguments_accessor.addColumn(argument.getAllValues(filtered_accessor));
+      for (const Scalar &select_expression : select_spec_->select_expressions()) {
+        arguments_accessor.addColumn(
+            select_expression.getAllValues(accessor));
       }
 
       arguments_accessor.beginIteration();
@@ -80,14 +92,17 @@ bool StreamingSelectOperator::next(
     }
   }
 
+  return true;
 }
 
 bool StreamingSelectOperator::close() {
   // Error if the operator has not been opened.
-  if (query_plan_.get() == nullptr) {
-    return true;
+  if (select_spec_.get() == nullptr) {
+    return false;
   }
 
-  query_plan_.release();
-  return false;
+  select_spec_.release();
+  return true;
 }
+
+}  // namespace quickstep

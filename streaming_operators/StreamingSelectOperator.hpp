@@ -26,8 +26,10 @@
 // #include "storage/StorageBlockInfo.hpp"
 // #include "utility/Macros.hpp"
 // Notes (jmp): For the first version just define operators based on the TupleVector
-#include "catalog/CatalogDatabaseLite.hpp"
-#include "types/containers/TupleValueAccessor.hpp"
+// #include "catalog/CatalogDatabaseLite.hpp"
+#include "streaming_operators/StreamingOperator.hpp"
+#include "types/containers/TupleVectorValueAccessor.hpp"
+#include "query_specs/SelectSpec.hpp"
 
 #include "glog/logging.h"
 
@@ -40,6 +42,8 @@ namespace quickstep {
  *  @{
  */
 
+class QuerySpec;
+
 /**
  * @brief A select operator in a streaming query plan.
  **/
@@ -50,24 +54,23 @@ class StreamingSelectOperator : public StreamingOperator {
    **/
   ~StreamingSelectOperator() override {}
 
-  bool open(const serialization::QueryPlan &planSpecs) override;
+  bool open(const QuerySpec *query_spec) override;
 
-  bool next(const std::vector<TupleVectorValueAccessor> &inputs,
+  bool next(std::vector<TupleVectorValueAccessor> &inputs,
             std::vector<TupleVectorValueAccessor> &outputs) override;
 
   bool close() override;
     
  private:
-  StreamingSelectOperator(const std::size_t query_id,
-                          const CatalogDatabaseLite &database)
-      : StreamingOperator(query_id, database) {}
+  explicit StreamingSelectOperator(const std::size_t query_id)
+      : StreamingOperator(query_id) {}
 
-  std::unique<QueryPlan> query_plan_;
+  std::unique_ptr<const SelectSpec> select_spec_;
            
   DISALLOW_COPY_AND_ASSIGN(StreamingSelectOperator);
 };
   
-  /** @} */
+/** @} */
   
 }  // namespace quickstep
 

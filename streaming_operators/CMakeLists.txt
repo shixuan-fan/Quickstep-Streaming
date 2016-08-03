@@ -16,10 +16,22 @@
 # under the License.
 
 add_library(quickstep_streamingoperators_StreamingOperator ../empty_src.cpp StreamingOperator.hpp)
+add_library(quickstep_streamingoperators_StreamingSelectOperator
+            StreamingSelectOperator.cpp
+            StreamingSelectOperator.hpp)
 
 target_link_libraries(quickstep_streamingoperators_StreamingOperator
                       glog
-                      types_containers_TupleVectorValueAccessor)
+                      quickstep_types_containers_TupleVectorValueAccessor)
+target_link_libraries(quickstep_streamingoperators_StreamingSelectOperator
+                      glog
+                      quickstep_queryspecs_SelectSpec
+                      quickstep_queryspecs_QuerySpec
+                      quickstep_queryspecs_QuerySpecType
+                      quickstep_streamingoperators_StreamingOperator
+                      quickstep_types_containers_ColumnVector
+                      quickstep_types_containers_ColumnVectorsValueAccessor
+                      quickstep_types_containers_TupleVectorValueAccessor)
 
 # Module all-in-one library:
 add_library(quickstep_streamingoperators ../empty_src.cpp StreamingOperatorsModule.hpp)
