@@ -35,7 +35,7 @@ class ColumnVector;
 class Type;
 class ValueAccessor;
 
-struct SubBlocksReference;
+// struct SubBlocksReference;
 
 /** \addtogroup Expressions
  *  @{

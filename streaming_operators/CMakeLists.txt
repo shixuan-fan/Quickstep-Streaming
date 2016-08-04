@@ -37,3 +37,28 @@ target_link_libraries(quickstep_streamingoperators_StreamingSelectOperator
 add_library(quickstep_streamingoperators ../empty_src.cpp StreamingOperatorsModule.hpp)
 target_link_libraries(quickstep_streamingoperators
                       quickstep_streamingoperators_StreamingOperator)
+
+# Tests:
+add_executable(StreamingSelectOperator_unittest
+               "${CMAKE_CURRENT_SOURCE_DIR}/tests/StreamingSelectOperator_unittest.cpp")
+target_link_libraries(StreamingSelectOperator_unittest
+                      gtest
+                      gtest_main
+                      quickstep_catalog_CatalogAttribute
+                      quickstep_catalog_CatalogRelationSchema
+                      quickstep_expressions_predicate_ComparisonPredicate
+                      quickstep_expressions_predicate_Predicate
+                      quickstep_expressions_scalar_Scalar
+                      quickstep_expressions_scalar_ScalarAttribute
+                      quickstep_expressions_scalar_ScalarLiteral
+                      quickstep_streamingoperators_StreamingSelectOperator
+                      quickstep_types_CharType
+                      quickstep_types_TypeFactory
+                      quickstep_types_TypeID
+                      quickstep_types_TypedValue
+                      quickstep_types_operations_comparisons_ComparisonFactory
+                      quickstep_types_operations_comparisons_ComparisonID
+                      quickstep_types_containers_Tuple
+                      quickstep_types_containers_TupleVectorValueAccessor)
+add_test(StreamingSelectOperator_unittest StreamingSelectOperator_unittest)
+                      

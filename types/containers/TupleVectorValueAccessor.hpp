@@ -15,6 +15,11 @@
  *   limitations under the License.
  **/
 
+/**
+ * Modifed getUntypedValueAtAbsolutePosition() so that it does not fail for
+ * null value.
+ **/
+
 #ifndef QUICKSTEP_TYPES_CONTAINERS_TUPLE_VECTOR_VALUE_ACCESSOR_HPP_
 #define QUICKSTEP_TYPES_CONTAINERS_TUPLE_VECTOR_VALUE_ACCESSOR_HPP_
 
@@ -113,7 +118,12 @@ class TupleVectorValueAccessor : public ValueAccessor {
   inline const void* getUntypedValueAtAbsolutePosition(const attribute_id attr_id,
                                                        const tuple_id tid) const {
     DCHECK(tupleIdInRange(tid));
-    return tuples_[tid].getAttributeValue(attr_id).getDataPtr();
+    TypedValue value = tuples_[tid].getAttributeValue(attr_id);
+    if (check_null && value.isNull()) {
+      return nullptr;
+    } else {
+      return value.getDataPtr();
+    }
   }
 
   inline TypedValue getTypedValueAtAbsolutePosition(const attribute_id attr_id,

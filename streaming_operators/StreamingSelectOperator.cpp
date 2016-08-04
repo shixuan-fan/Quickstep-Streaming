@@ -46,13 +46,14 @@ bool StreamingSelectOperator::open(const QuerySpec *plan_specs) {
 bool StreamingSelectOperator::next(
     const std::vector<TupleVectorValueAccessor*> &inputs,
     std::vector<TupleVectorValueAccessor*> *outputs) {
-
+  DCHECK(outputs->empty());
+  
   for (TupleVectorValueAccessor *input : inputs) {
     ValueAccessor *accessor = input;
     // Filter before selection.
     TupleIdSequence *filter_result = nullptr;
-    for (const Predicate &predicate : select_spec_->predicates()) {
-      filter_result = predicate.getAllMatches(input, filter_result, nullptr);
+    for (const std::unique_ptr<const Predicate> &predicate : select_spec_->predicates()) {
+      filter_result = predicate->getAllMatches(input, filter_result, nullptr);
     }
 
     if (filter_result != nullptr) {
@@ -80,9 +81,9 @@ bool StreamingSelectOperator::next(
     } else {
       // Calculate the value of arguments and iterate through them.
       ColumnVectorsValueAccessor arguments_accessor;
-      for (const Scalar &select_expression : select_spec_->select_expressions()) {
+      for (const std::unique_ptr<const Scalar> &select_expression : select_spec_->select_expressions()) {
         arguments_accessor.addColumn(
-            select_expression.getAllValues(accessor));
+            select_expression->getAllValues(accessor));
       }
 
       arguments_accessor.beginIteration();
