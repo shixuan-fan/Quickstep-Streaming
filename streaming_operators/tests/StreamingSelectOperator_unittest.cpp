@@ -141,7 +141,6 @@ class StreamingSelectOperatorTest : public ::testing::TestWithParam<bool> {
 
   // Reset predicates.
   void resetPredicates(int lower_bound_val, int upper_bound_val) {
-    predicates_.reset(new std::vector<std::unique_ptr<const Predicate>>());
     Scalar *base_scalar_lower = new ScalarAttribute(*schema_->getAttributeByName("base_value"));
     Scalar *lower_bound =
         new ScalarLiteral(TypedValue(lower_bound_val),
@@ -214,12 +213,11 @@ TEST_F(StreamingSelectOperatorTest, OpenCloseTest) {
 
 TEST_P(StreamingSelectOperatorTest, SimpleProjectionTest) {
   // Predicates.
+  predicates_.reset(new std::vector<std::unique_ptr<const Predicate>>());
   if (GetParam()) {
     resetPredicates(kLowerBound, kUpperBound);
-  } else {
-    predicates_.reset(new std::vector<std::unique_ptr<const Predicate>>());
   }
-
+  
   // Select attributes.
   std::vector<attribute_id> select_attributes;
   select_attributes.push_back(kIntIndex);
@@ -232,6 +230,7 @@ TEST_P(StreamingSelectOperatorTest, SimpleProjectionTest) {
 
   // Make output vectors and compare.
   std::vector<TupleVectorValueAccessor*> outputs;
+  outputs.clear();
   select_operator_->next(*inputs_, &outputs);
   checkOutput(outputs);
   select_operator_->close();
@@ -239,10 +238,9 @@ TEST_P(StreamingSelectOperatorTest, SimpleProjectionTest) {
 
 TEST_P(StreamingSelectOperatorTest, ArbitraryExpressionTest) {
   // Predicates.
+  predicates_.reset(new std::vector<std::unique_ptr<const Predicate>>());
   if (GetParam()) {
     resetPredicates(kLowerBound, kUpperBound);
-  } else {
-    predicates_.reset(new std::vector<std::unique_ptr<const Predicate>>());
   }
 
   // Select expressions.
