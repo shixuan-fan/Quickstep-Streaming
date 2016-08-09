@@ -22,6 +22,7 @@
 #include "basics/Common.hpp"
 #include "expressions/predicate/Predicate.hpp"
 #include "expressions/scalar/Scalar.hpp"
+#include "expressions/window_aggregation/WindowAggregationFunction.hpp"
 #include "query_specs/QuerySpec.hpp"
 #include "query_specs/QuerySpecType.hpp"
 #include "types/Type.hpp"
@@ -58,28 +59,12 @@ class SelectWindowSpec : public QuerySpec {
    **/
   SelectWindowSpec(std::vector<std::unique_ptr<const Predicate>> &&predicates,
                    std::vector<std::unique_ptr<const Scalar>> &&select_expressions,
-                   std::vector<std::unique_ptr<const Scalar>> &&partition_keys,
-                   const attribute_id streaming_attribute_id,
+                   const Scalar *streaming_attribute,
+                   const std::vector<std::unique_ptr<const WindowAggregateFunction>> &aggregate_functions,
+                   const std::vector<std::unique_ptr<const Scalar>> &partition_keys,
                    const TypedValue window_duration,
                    const TypedValue emit_duration,
-                   const TypedValue alignment_offset)
-       : predicates_(std::move(predicates)),
-         select_expressions_(std::move(select_expressions)),
-         partition_keys_(std::move(partition_keys)),
-         streaming_attribute_id_(streaming_attribute_id),
-         emit_duration_(emit_duration),
-         alignment_offset_(alignment_offset),
-         partition_keys_(std::move(partition_keys)),
-         is_row_(false),
-         preceding_value_(window_duration) {
-    // Get the addable type.
-    Type &range_type = TypeFactory::GetType(window_duration.getTypeID());
-    DCHECK(range_type.getSuperTypeID() == kNumeric ||
-           range_type.getTypeID() == kDatetimeInterval ||
-           range_type.getTypeID() == kYearMonthInterval);
-    
-    following_value_.reset(&following_type.makeZeroValue());
-  }
+                   const TypedValue alignment_offset);
 
   /**
    * @brief Constructor for specification of streaming window aggregation.
@@ -97,6 +82,9 @@ class SelectWindowSpec : public QuerySpec {
    * @param following_value The value of rows/range that follows the current
    *                        value. NULL if unbounded.
    **/
+   
+  // TODO(Shixuan): Will come back later.
+  /* 
   SelectWindowSpec(std::vector<std::unique_ptr<const Predicate>> &&predicates,
                    std::vector<std::unique_ptr<const Scalar>> &&select_expressions,
                    std::vector<std::unique_ptr<const Scalar> &&partition_keys,
@@ -114,7 +102,7 @@ class SelectWindowSpec : public QuerySpec {
     Type &following_type = TypeFactory::GetType(preceding_value_.getTypeID(), true);
     emit_duration_ = following_type.makeNullValue();
     alignment_offset_ = following_type.makeNullValue();
-  }
+  } */
 
   /**
    * @brief Destructor
@@ -181,43 +169,14 @@ class SelectWindowSpec : public QuerySpec {
   }
 
   /**
-   * @brief Get the partition keys.
+   * @brief Get the handles.
    *
-   * @return The partition keys.
+   * @return The handles.
    **/
-  const std::vector<std::unique_ptr<const Scalar>>& partition_keys() const {
-    return partition_keys_;
+  const std::vector<WindowAggregationHandle*>& handles() const {
+    return handles_;
   }
 
-  /**
-   * @brief Get the frame mode.
-   *
-   * @return True if ROWS mode, false if RANGE mode.
-   **/
-  const bool is_row() const {
-    return is_row_;
-  }
-
-  /**
-   * @brief Get the preceding value.
-   *
-   * @return The value of rows/range that precedes the current value. NULL if
-   *         unbounded.
-   **/
-  const TypedValue preceding_value() const {
-    return preceding_value_;
-  }
-
-  /**
-   * @brief Get the following value.
-   *
-   * @return The value of rows/range that follows the current value. NULL if
-   *         unbounded.
-   **/
-  const TypedValue following_value() const {
-    return following_value_;
-  }
-  
   /**
    * @brief Get the type of query plan.
    *
@@ -234,18 +193,11 @@ class SelectWindowSpec : public QuerySpec {
 
   // For Window:
   // The streaming attribute has to be non-decreasing.
-  const attribute_id streaming_attribute_id_;
+  std::unique_ptr<Scalar> streaming_attribute_;
   const TypedValue emit_duration_;
   const TypedValue alignment_offset_;
-  
-  // Partition key.
-  const std::vector<std::unique_ptr<const Scalar>> partition_keys_; 
 
-  // Window framing.
-  // Note that tumbling window could also be represented in this format.
-  const bool is_row_;
-  const TypedValue preceding_value_;
-  const TypedValue following_value_; 
+  std::vector<WindowAggregationHandle*> handles_;
 };
 
 /** @} */
