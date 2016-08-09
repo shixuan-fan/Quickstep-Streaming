@@ -25,7 +25,8 @@ namespace quickstep {
  * @brief Query spec types.
  **/
 enum QuerySpecType {
-  kSelectSpec = 0
+  kSelectSpec = 0,
+  kSelectWindowSpec 
 };
 
 }  // namespace quickstep

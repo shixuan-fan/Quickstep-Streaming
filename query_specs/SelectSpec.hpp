@@ -40,6 +40,9 @@ class SelectSpec : public QuerySpec {
  public:
   /**
    * @brief Constructor for specification of selection with arbitrary expression.
+   *
+   * @param predicates The predicates used in the selection.
+   * @param select_expressions The selected expressions.
    **/
   SelectSpec(std::vector<std::unique_ptr<const Predicate>> &&predicates,
              std::vector<std::unique_ptr<const Scalar>> &&select_expressions)
@@ -49,6 +52,9 @@ class SelectSpec : public QuerySpec {
 
   /**
    * @brief Constructor for specification of simple projection selection.
+   *
+   * @param predicates The predicates used in the selection.
+   * @param select_attributes The id of the selected attributes.
    **/
   SelectSpec(std::vector<std::unique_ptr<const Predicate>> &&predicates,
              std::vector<attribute_id> &&select_attributes)

@@ -18,6 +18,7 @@
 add_library(quickstep_queryspecs_QuerySpec ../empty_src.cpp QuerySpec.hpp)
 add_library(quickstep_queryspecs_QuerySpecType ../empty_src.cpp QuerySpecType.hpp)
 add_library(quickstep_queryspecs_SelectSpec ../empty_src.cpp SelectSpec.hpp)
+add_library(quickstep_queryspecs_SelectWindowSpec ../empty_src.cpp SelectWindowSpec.hpp)
 
 target_link_libraries(quickstep_queryspecs_QuerySpec
                       glog
@@ -30,10 +31,21 @@ target_link_libraries(quickstep_queryspecs_SelectSpec
                       quickstep_expressions_scalar_Scalar
                       quickstep_queryspecs_QuerySpec
                       quickstep_queryspecs_QuerySpecType)
+target_link_libraries(quickstep_queryspecs_SelectSpec
+                      glog
+                      quickstep_expressions_predicate_Predicate
+                      quickstep_expressions_scalar_Scalar
+                      quickstep_queryspecs_QuerySpec
+                      quickstep_queryspecs_QuerySpecType
+                      quickstep_types_Type
+                      quickstep_types_TypeFactory
+                      quickstep_types_TypeID
+                      quickstep_types_TypedValue)
 
 # Module all-in-one library:
 add_library(quickstep_queryspecs ../empty_src.cpp QuerySpecsModule.hpp)
 target_link_libraries(quickstep_queryspecs
                       quickstep_queryspecs_QuerySpec
                       quickstep_queryspecs_QuerySpecType
-                      quickstep_queryspecs_SelectSpec)
+                      quickstep_queryspecs_SelectSpec
+                      quickstep_queryspecs_SelectWindowSpec)
