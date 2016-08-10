@@ -75,7 +75,7 @@ const Type* WindowAggregateFunctionAvg::resultTypeForArgumentTypes(
 WindowAggregationHandle* WindowAggregateFunctionAvg::createHandle(
       const std::vector<std::unique_ptr<const Scalar>> &arguments,
       std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
-      const Scalar *streaming_attribute,
+      const Scalar &streaming_attribute,
       const bool is_row,
       const TypedValue value_preceding,
       const TypedValue value_following) const {

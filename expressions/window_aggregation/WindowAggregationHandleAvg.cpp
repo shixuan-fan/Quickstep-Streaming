@@ -45,7 +45,7 @@ namespace quickstep {
 
 WindowAggregationHandleAvg::WindowAggregationHandleAvg(
     std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
-    const Scalar *streaming_attribute,
+    const Scalar &streaming_attribute,
     const bool is_row,
     const TypedValue value_preceding,
     const TypedValue value_following,
@@ -112,7 +112,7 @@ ColumnVector* WindowAggregationHandleAvg::calculate(
       new NativeColumnVector(*result_type_, tuple_accessor->getNumTuples());
   ColumnVectorsValueAccessor *argument_accessor = new ColumnVectorsValueAccessor();
   argument_accessor->addColumn(arguments[0]);
-
+/*
   // Initialize the information about the window.
   TypedValue sum = sum_type_->makeZeroValue();
   std::uint64_t count = 0;
@@ -171,7 +171,7 @@ ColumnVector* WindowAggregationHandleAvg::calculate(
           divide_operator_->applyToTypedValues(sum, TypedValue(static_cast<double>(count))));
     }
   }
-
+*/
   return window_aggregates;
 }
 

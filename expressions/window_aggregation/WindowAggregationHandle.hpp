@@ -21,6 +21,7 @@
 #define QUICKSTEP_EXPRESSIONS_WINDOW_AGGREGATION_WINDOW_AGGREGATION_HANDLE_HPP_
 
 #include <cstddef>
+#include <deque>
 #include <memory>
 #include <vector>
 
@@ -34,6 +35,7 @@
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVector.hpp"
 #include "types/containers/ColumnVectorsValueAccessor.hpp"
+#include "types/containers/Tuple.hpp"
 #include "types/operations/comparisons/Comparison.hpp"
 #include "types/operations/comparisons/ComparisonFactory.hpp"
 #include "types/operations/comparisons/ComparisonID.hpp"
@@ -46,7 +48,7 @@
  * Changes:
  * 1. Change private fields.
  * 2. Use HashTable for partitioning.
- * 3. Add WindowAggregationState to keep track of the ongoing streaming.
+ * 3. Use a deque to keeptrack of all the in-window tuples.
  **/
 
 namespace quickstep {
@@ -128,23 +130,10 @@ class WindowAggregationHandle {
    **/
   WindowAggregationHandle(
       std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
-      const Scalar *streaming_attribute,
+      const Scalar &streaming_attribute,
       const bool is_row,
       const TypedValue value_preceding,
       const TypedValue value_following);
-
-  /**
-   * @brief Check if test tuple is in the same partition as the current
-   *        tuple in the accessor.
-   *
-   * @param tuple_accessor The ValueAccessor for tuples.
-   * @param test_tuple_id The id of the test tuple.
-   *
-   * @return True if test tuple is in the same partition as the current tuple in
-   *         the accessor, false if not.
-   **/
-  bool samePartition(const ColumnVectorsValueAccessor *tuple_accessor,
-                     const tuple_id test_tuple_id) const;
 
   /**
    * @brief Check if test tuple is in the defined range.
@@ -154,14 +143,13 @@ class WindowAggregationHandle {
    *
    * @return True if test tuple is in the defined window, false if not.
    **/
-  bool inWindow(const ColumnVectorsValueAccessor *tuple_accessor,
-                const tuple_id test_tuple_id) const;
+  bool inWindow(const std::size_t test_tuple_id) const;
 
   // Partition keys.
   const std::vector<std::unique_ptr<const Scalar>> partition_by_attributes_;
 
   // Streaming attributes.
-  std::unique_ptr<const Scalar> streaming_attribute_;
+  const attribute_id streaming_attribute_id_;
 
   // IDs, type, Comparator and operator for frame boundary check in RANGE mode.
   std::unique_ptr<UncheckedBinaryOperator> range_add_operator_;
@@ -173,6 +161,12 @@ class WindowAggregationHandle {
   const bool is_row_;
   const TypedValue value_preceding_;
   const TypedValue value_following_;
+
+  // Information for current in-window tuples.
+  // For UNBOUNDED PRECEDING case, only store the tuples that have not made the
+  // output.
+  std::deque<Tuple> window_;
+  std::size_t current_tuple_index_;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(WindowAggregationHandle);
