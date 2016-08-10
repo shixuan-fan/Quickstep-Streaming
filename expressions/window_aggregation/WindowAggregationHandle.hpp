@@ -55,7 +55,7 @@ namespace quickstep {
 
 class Scalar;
 class Type;
-class ValueAccessor;
+class TupleVectorValueAccessor;
 
 /** \addtogroup Expressions
  *  @{
@@ -115,8 +115,9 @@ class WindowAggregationHandle {
    *
    * @return A ColumnVector of the calculated window aggregates.
    **/
-  virtual ColumnVector* calculate(ColumnVectorsValueAccessor* block_accessors,
-                                  const std::vector<ColumnVector*> &arguments) const = 0;
+  virtual std::vector<TypedValue>* calculateAggregate(
+      TupleVectorValueAccessor *input,
+      const TypedValue emit_duration) = 0;
 
  protected:
   /**
@@ -165,7 +166,7 @@ class WindowAggregationHandle {
   // Information for current in-window tuples.
   // For UNBOUNDED PRECEDING case, only store the tuples that have not made the
   // output.
-  std::deque<Tuple> window_;
+  std::deque<const Tuple*> window_;
   std::size_t current_tuple_index_;
 
  private:

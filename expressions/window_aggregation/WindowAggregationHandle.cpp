@@ -102,10 +102,10 @@ bool WindowAggregationHandle::inWindow(const std::size_t test_tuple_index) const
   } else {
     // In RANGE mode, check the difference of streaming attribute.
     TypedValue current_value =
-        window_[current_tuple_index_].getAttributeValue(streaming_attribute_id_);
+        window_[current_tuple_index_]->getAttributeValue(streaming_attribute_id_);
     TypedValue test_value =
         range_compare_type_->coerceValue(
-            window_[test_tuple_index].getAttributeValue(streaming_attribute_id_),
+            window_[test_tuple_index]->getAttributeValue(streaming_attribute_id_),
             TypeFactory::GetType(current_value.getTypeID()));
 
 

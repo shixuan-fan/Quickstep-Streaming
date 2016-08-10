@@ -32,7 +32,7 @@
 #include "types/TypeFactory.hpp"
 #include "types/TypeID.hpp"
 #include "types/TypedValue.hpp"
-#include "types/containers/ColumnVectorsValueAccessor.hpp"
+#include "types/containers/TupleVectorValueAccessor.hpp"
 #include "types/containers/ValueAccessor.hpp"
 #include "types/operations/binary_operations/BinaryOperation.hpp"
 #include "types/operations/binary_operations/BinaryOperationFactory.hpp"
@@ -73,69 +73,59 @@ WindowAggregationHandleAvg::WindowAggregationHandleAvg(
       break;
   }
 
-  sum_type_ = &(TypeFactory::GetType(type_id));
+  const Type &sum_type = TypeFactory::GetType(type_id);
+  sum_ = sum_type.makeZeroValue();
 
   // Result is nullable, because AVG() over 0 values (or all NULL values) is
   // NULL.
   result_type_
       = &(BinaryOperationFactory::GetBinaryOperation(BinaryOperationID::kDivide)
-              .resultTypeForArgumentTypes(*sum_type_, TypeFactory::GetType(kDouble))
+              .resultTypeForArgumentTypes(sum_type, TypeFactory::GetType(kDouble))
                   ->getNullableVersion());
 
   // Make operators to do arithmetic:
   // Add operator for summing argument values.
   fast_add_operator_.reset(
       BinaryOperationFactory::GetBinaryOperation(BinaryOperationID::kAdd)
-          .makeUncheckedBinaryOperatorForTypes(*sum_type_, argument->getType()));
+          .makeUncheckedBinaryOperatorForTypes(sum_type, argument->getType()));
 
   // Subtract operator for dropping argument values off the window.
   fast_subtract_operator_.reset(
       BinaryOperationFactory::GetBinaryOperation(BinaryOperationID::kSubtract)
-          .makeUncheckedBinaryOperatorForTypes(*sum_type_, argument->getType()));
+          .makeUncheckedBinaryOperatorForTypes(sum_type, argument->getType()));
 
   // Divide operator for dividing sum by count to get final average.
   divide_operator_.reset(
       BinaryOperationFactory::GetBinaryOperation(BinaryOperationID::kDivide)
-          .makeUncheckedBinaryOperatorForTypes(*sum_type_, TypeFactory::GetType(kDouble)));
+          .makeUncheckedBinaryOperatorForTypes(sum_type, TypeFactory::GetType(kDouble)));
 }
 
-ColumnVector* WindowAggregationHandleAvg::calculate(
-    ColumnVectorsValueAccessor *tuple_accessor,
-    const std::vector<ColumnVector*> &arguments) const {
-  DCHECK_EQ(1u, arguments.size());
-  DCHECK(arguments[0]->isNative());
-  DCHECK_EQ(static_cast<std::size_t>(tuple_accessor->getNumTuples()),
-            static_cast<const NativeColumnVector*>(arguments[0])->size());
+std::vector<TypedValue>* WindowAggregationHandleAvg::calculateAggregate(
+    TupleVectorValueAccessor *input,
+    const TypedValue emit_duration) {
+  std::vector<TypedValue> *result = new std::vector<TypedValue>();
+  input->beginIteration();
 
-  // Initialize the output column and argument accessor.
-  NativeColumnVector *window_aggregates =
-      new NativeColumnVector(*result_type_, tuple_accessor->getNumTuples());
-  ColumnVectorsValueAccessor *argument_accessor = new ColumnVectorsValueAccessor();
-  argument_accessor->addColumn(arguments[0]);
-/*
-  // Initialize the information about the window.
-  TypedValue sum = sum_type_->makeZeroValue();
-  std::uint64_t count = 0;
-  tuple_id start_tuple_id = 0;  // The id of the first tuple in the window.
-  tuple_id end_tuple_id = 0;  // The id of the tuple that just passed the last
-                              // tuple in the window.
+  while (input->next()) {
+    const Tuple *copy =
+        new Tuple(std::vector<TypedValue>(
+            input->getTuple()->getAttributeValueVector()));
+    window_.push_back(copy);
+  }
 
-  // Create a window for each tuple and calculate the window aggregate.
-  tuple_accessor->beginIteration();
-  argument_accessor->beginIteration();
+  return result;
 
-  while (tuple_accessor->next() && argument_accessor->next()) {
-    tuple_id current_tuple_id = tuple_accessor->getCurrentPosition();
+    // If it is aggregates, we should check the emit duration to see if an
+    // output is needed.
+    
 
-    // If current tuple is not in the same partition as the previous tuple,
-    // reset the window.
-    if (!samePartition(tuple_accessor, current_tuple_id - 1)) {
-      start_tuple_id = current_tuple_id;
-      end_tuple_id = current_tuple_id;
-      count = 0;
-      sum = sum_type_->makeZeroValue();
+    /*
+    // If the new tuple is not in current window, the current window is finished
+    // and we could get the result.
+    if (!inWindow(window_.size() - 1)) {
+      sum_ = fast_add_operator_(sum, 
     }
-
+    
     // Drop tuples that will be out of the window from the beginning.
     while (!inWindow(tuple_accessor, start_tuple_id)) {
       TypedValue start_value =
@@ -171,8 +161,9 @@ ColumnVector* WindowAggregationHandleAvg::calculate(
           divide_operator_->applyToTypedValues(sum, TypedValue(static_cast<double>(count))));
     }
   }
-*/
+  
   return window_aggregates;
+  */
 }
 
 }  // namespace quickstep

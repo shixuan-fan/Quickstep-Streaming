@@ -38,9 +38,7 @@
 
 namespace quickstep {
 
-class ColumnVector;
-class ColumnVectorsValueAccessor;
-class ValueAccessor;
+class TupleVectorValueAccessor;
 
 /** \addtogroup Expressions
  *  @{
@@ -53,8 +51,9 @@ class WindowAggregationHandleAvg : public WindowAggregationHandle {
  public:
   ~WindowAggregationHandleAvg() override {}
 
-  ColumnVector* calculate(ColumnVectorsValueAccessor* block_accessors,
-                          const std::vector<ColumnVector*> &arguments) const override;
+  std::vector<TypedValue>* calculateAggregate(
+      TupleVectorValueAccessor *input,
+      const TypedValue emit_duration);
 
  private:
   friend class WindowAggregateFunctionAvg;
@@ -78,11 +77,13 @@ class WindowAggregationHandleAvg : public WindowAggregationHandle {
       const Scalar *argument);
 
   std::unique_ptr<const Scalar> argument_;
-  const Type *sum_type_;
   const Type *result_type_;
   std::unique_ptr<UncheckedBinaryOperator> fast_add_operator_;
   std::unique_ptr<UncheckedBinaryOperator> fast_subtract_operator_;
   std::unique_ptr<UncheckedBinaryOperator> divide_operator_;
+
+  // Handle State.
+  TypedValue sum_;
 
   DISALLOW_COPY_AND_ASSIGN(WindowAggregationHandleAvg);
 };
