@@ -21,6 +21,7 @@
 
 #include <vector>
 
+#include "expressions/scalar/Scalar.hpp"
 #include "expressions/window_aggregation/WindowAggregationHandle.hpp"
 #include "types/Type.hpp"
 #include "types/operations/comparisons/Comparison.hpp"

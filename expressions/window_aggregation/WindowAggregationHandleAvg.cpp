@@ -25,6 +25,7 @@
 
 #include "basics/Common.hpp"
 // #include "catalog/CatalogTypedefs.hpp"
+#include "expressions/scalar/Scalar.hpp"
 #include "expressions/window_aggregation/WindowAggregationHandle.hpp"
 // #include "storage/ValueAccessor.hpp"
 #include "types/Type.hpp"
@@ -43,21 +44,22 @@
 namespace quickstep {
 
 WindowAggregationHandleAvg::WindowAggregationHandleAvg(
-    const std::vector<std::unique_ptr<const Scalar>> &partition_by_attributes,
-    const std::vector<std::unique_ptr<const Scalar>> &order_by_attributes,
+    std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
+    const Scalar *streaming_attribute,
     const bool is_row,
-    const std::int64_t num_preceding,
-    const std::int64_t num_following,
-    const Type *argument_type)
-    : WindowAggregationHandle(partition_by_attributes,
-                              order_by_attributes,
+    const TypedValue value_preceding,
+    const TypedValue value_following,
+    const Scalar *argument)
+    : WindowAggregationHandle(std::move(partition_by_attributes),
+                              streaming_attribute,
                               is_row,
-                              num_preceding,
-                              num_following) {
+                              value_preceding,
+                              value_following),
+      argument_(argument) {
   // We sum Int as Long and Float as Double so that we have more headroom when
   // adding many values.
   TypeID type_id;
-  switch (argument_type->getTypeID()) {
+  switch (argument->getType().getTypeID()) {
     case kInt:
     case kLong:
       type_id = kLong;
@@ -67,7 +69,7 @@ WindowAggregationHandleAvg::WindowAggregationHandleAvg(
       type_id = kDouble;
       break;
     default:
-      type_id = argument_type->getTypeID();
+      type_id = argument->getType().getTypeID();
       break;
   }
 
@@ -84,12 +86,12 @@ WindowAggregationHandleAvg::WindowAggregationHandleAvg(
   // Add operator for summing argument values.
   fast_add_operator_.reset(
       BinaryOperationFactory::GetBinaryOperation(BinaryOperationID::kAdd)
-          .makeUncheckedBinaryOperatorForTypes(*sum_type_, *argument_type));
+          .makeUncheckedBinaryOperatorForTypes(*sum_type_, argument->getType()));
 
   // Subtract operator for dropping argument values off the window.
   fast_subtract_operator_.reset(
       BinaryOperationFactory::GetBinaryOperation(BinaryOperationID::kSubtract)
-          .makeUncheckedBinaryOperatorForTypes(*sum_type_, *argument_type));
+          .makeUncheckedBinaryOperatorForTypes(*sum_type_, argument->getType()));
 
   // Divide operator for dividing sum by count to get final average.
   divide_operator_.reset(

@@ -70,13 +70,14 @@ class WindowAggregationHandleAvg : public WindowAggregationHandle {
    * @param argument_type Type of the argument.
    **/
   WindowAggregationHandleAvg(
-      const std::vector<std::unique_ptr<const Scalar>> &partition_by_attributes,
+      std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
       const Scalar *streaming_attribute,
       const bool is_row,
       const TypedValue value_preceding,
       const TypedValue value_following,
       const Scalar *argument);
 
+  std::unique_ptr<const Scalar> argument_;
   const Type *sum_type_;
   const Type *result_type_;
   std::unique_ptr<UncheckedBinaryOperator> fast_add_operator_;

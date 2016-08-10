@@ -31,6 +31,7 @@
 #include "types/TypeID.hpp"
 #include "types/TypedValue.hpp"
 #include "types/containers/ColumnVectorsValueAccessor.hpp"
+#include "types/operations/binary_operations/AddBinaryOperation.hpp"
 #include "types/operations/binary_operations/BinaryOperation.hpp"
 #include "types/operations/binary_operations/BinaryOperationFactory.hpp"
 #include "types/operations/binary_operations/BinaryOperationID.hpp"
@@ -41,81 +42,41 @@
 namespace quickstep {
 
 WindowAggregationHandle::WindowAggregationHandle(
-    const std::vector<std::unique_ptr<const Scalar>> &partition_by_attributes,
+    std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
     const Scalar *streaming_attribute,
     const bool is_row,
     const TypedValue value_preceding,
-    const TypedValue value_following);
-    : is_row_(is_row),
+    const TypedValue value_following)
+    : partition_by_attributes_(std::move(partition_by_attributes)),
+      streaming_attribute_(streaming_attribute),
+      is_row_(is_row),
       value_preceding_(value_preceding),
       value_following_(value_following) {
-  // IDs and types of partition keys.
-  std::vector<const Type*> partition_key_types;
-  for (const std::unique_ptr<const Scalar> &partition_by_attribute : partition_by_attributes) {
-    partition_key_ids_.push_back(
-        partition_by_attribute->getAttributeIdForValueAccessor());
-    partition_key_types.push_back(&partition_by_attribute->getType());
-  }
-
-  // Comparison operators for checking if two tuples belong to the same partition.
-  for (const Type *partition_key_type : partition_key_types) {
-    partition_equal_comparators_.emplace_back(
-        ComparisonFactory::GetComparison(ComparisonID::kEqual)
-            .makeUncheckedComparatorForTypes(*partition_key_type, *partition_key_type));
-  }
-
-  // IDs and types of order keys.
-  const Type *first_order_key_type = nullptr;
-  for (const std::unique_ptr<const Scalar> &order_by_attribute : order_by_attributes) {
-    order_key_ids_.push_back(
-        order_by_attribute->getAttributeIdForValueAccessor());
-    if (first_order_key_type == nullptr) {
-      first_order_key_type = &order_by_attribute->getType();
-    }
-  }
-
-  // ID and type of the first order key if in RANGE mode.
+  // Operator and comparator for range check.
   if (!is_row) {
-    DCHECK(first_order_key_type != nullptr);
+    DCHECK(streaming_attribute_ != nullptr);
 
     // Comparators and operators to check window frame in RANGE mode.
-    const Type &long_type = TypeFactory::GetType(kLong, false);
-    range_compare_type_ =
-        TypeFactory::GetUnifyingType(*first_order_key_type, long_type);
+    const Type &streaming_attribute_type = streaming_attribute_->getType();
+    const Type &range_type = TypeFactory::GetType(value_preceding.getTypeID());
+    range_compare_type_.reset(
+        AddBinaryOperation::Instance().resultTypeForArgumentTypes(
+            streaming_attribute_type, range_type));
 
     range_add_operator_.reset(
         BinaryOperationFactory::GetBinaryOperation(BinaryOperationID::kAdd)
-            .makeUncheckedBinaryOperatorForTypes(*first_order_key_type, long_type));
+            .makeUncheckedBinaryOperatorForTypes(streaming_attribute_type, range_type));
+    range_subtract_operator_.reset(
+        BinaryOperationFactory::GetBinaryOperation(BinaryOperationID::kSubtract)
+            .makeUncheckedBinaryOperatorForTypes(streaming_attribute_type, range_type));
+
     range_comparator_.reset(
         ComparisonFactory::GetComparison(ComparisonID::kLessOrEqual)
             .makeUncheckedComparatorForTypes(*range_compare_type_, *range_compare_type_));
   }
 }
 
-bool WindowAggregationHandle::samePartition(
-    const ColumnVectorsValueAccessor *tuple_accessor,
-    const tuple_id test_tuple_id) const {
-  // If test tuple does not exist.
-  if (test_tuple_id < 0 ||
-      test_tuple_id >= tuple_accessor->getNumTuples()) {
-    return false;
-  }
-
-  // Check all partition by attributes.
-  for (std::size_t partition_by_index = 0;
-       partition_by_index < partition_key_ids_.size();
-       ++partition_by_index) {
-    if (!partition_equal_comparators_[partition_by_index]->compareTypedValues(
-            tuple_accessor->getTypedValue(partition_key_ids_[partition_by_index]),
-            tuple_accessor->getTypedValueAtAbsolutePosition(
-                partition_key_ids_[partition_by_index], test_tuple_id))) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
+/*
 bool WindowAggregationHandle::inWindow(
     const ColumnVectorsValueAccessor *tuple_accessor,
     const tuple_id test_tuple_id) const {
@@ -183,5 +144,6 @@ bool WindowAggregationHandle::inWindow(
 
   return true;
 }
+*/
 
 }  // namespace quickstep

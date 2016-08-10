@@ -127,7 +127,7 @@ class WindowAggregationHandle {
    * @param num_following The number of rows/range that follows the current row.
    **/
   WindowAggregationHandle(
-      const std::vector<std::unique_ptr<const Scalar>> &partition_by_attributes,
+      std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
       const Scalar *streaming_attribute,
       const bool is_row,
       const TypedValue value_preceding,
@@ -157,20 +157,22 @@ class WindowAggregationHandle {
   bool inWindow(const ColumnVectorsValueAccessor *tuple_accessor,
                 const tuple_id test_tuple_id) const;
 
-  // IDs and comparators for partition keys.
-  std::vector<attribute_id> partition_key_ids_;
-  std::vector<std::unique_ptr<UncheckedComparator>> partition_equal_comparators_;
+  // Partition keys.
+  const std::vector<std::unique_ptr<const Scalar>> partition_by_attributes_;
+
+  // Streaming attributes.
+  std::unique_ptr<const Scalar> streaming_attribute_;
 
   // IDs, type, Comparator and operator for frame boundary check in RANGE mode.
-  std::vector<attribute_id> order_key_ids_;
   std::unique_ptr<UncheckedBinaryOperator> range_add_operator_;
+  std::unique_ptr<UncheckedBinaryOperator> range_subtract_operator_;  
   std::unique_ptr<UncheckedComparator> range_comparator_;  // Less than or Equal
-  const Type* range_compare_type_;
+  std::unique_ptr<const Type> range_compare_type_;
 
   // Window frame information.
   const bool is_row_;
-  const std::int64_t num_preceding_;
-  const std::int64_t num_following_;
+  const TypedValue value_preceding_;
+  const TypedValue value_following_;
 
  private:
   DISALLOW_COPY_AND_ASSIGN(WindowAggregationHandle);
