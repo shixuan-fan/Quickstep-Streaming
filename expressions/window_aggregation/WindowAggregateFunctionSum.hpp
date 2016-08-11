@@ -62,6 +62,8 @@ class WindowAggregateFunctionSum : public WindowAggregateFunction {
       const std::vector<std::unique_ptr<const Scalar>> &arguments,
       std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
       const Scalar &streaming_attribute,
+      const TypedValue emit_duration,
+      const TypedValue start_value,
       const bool is_row,
       const TypedValue value_preceding,
       const TypedValue value_following) const override;

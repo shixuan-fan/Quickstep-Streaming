@@ -73,12 +73,14 @@ const Type* WindowAggregateFunctionAvg::resultTypeForArgumentTypes(
 }
 
 WindowAggregationHandle* WindowAggregateFunctionAvg::createHandle(
-      const std::vector<std::unique_ptr<const Scalar>> &arguments,
-      std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
-      const Scalar &streaming_attribute,
-      const bool is_row,
-      const TypedValue value_preceding,
-      const TypedValue value_following) const {
+    const std::vector<std::unique_ptr<const Scalar>> &arguments,
+    std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
+    const Scalar &streaming_attribute,
+    const TypedValue emit_duration,
+    const TypedValue start_value,
+    const bool is_row,
+    const TypedValue value_preceding,
+    const TypedValue value_following) const {
   std::vector<const Type*> argument_types;
   for (const std::unique_ptr<const Scalar> &argument : arguments) {
     argument_types.push_back(&argument->getType());
@@ -90,10 +92,12 @@ WindowAggregationHandle* WindowAggregateFunctionAvg::createHandle(
 
   return new WindowAggregationHandleAvg(std::move(partition_by_attributes),
                                         streaming_attribute,
+                                        emit_duration,
+                                        start_value,
                                         is_row,
                                         value_preceding,
                                         value_following,
-                                        arguments[0].get());
+                                        *arguments[0]);
 }
 
 }  // namespace quickstep

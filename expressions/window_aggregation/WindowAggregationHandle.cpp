@@ -45,11 +45,15 @@ namespace quickstep {
 WindowAggregationHandle::WindowAggregationHandle(
     std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
     const Scalar &streaming_attribute,
+    const TypedValue emit_duration,
+    const TypedValue start_value,
     const bool is_row,
     const TypedValue value_preceding,
     const TypedValue value_following)
     : partition_by_attributes_(std::move(partition_by_attributes)),
       streaming_attribute_id_(streaming_attribute.getAttributeIdForValueAccessor()),
+      emit_duration_(emit_duration),
+      current_value_(start_value),
       is_row_(is_row),
       value_preceding_(value_preceding),
       value_following_(value_following),
@@ -101,11 +105,17 @@ bool WindowAggregationHandle::inWindow(const std::size_t test_tuple_index) const
     }
   } else {
     // In RANGE mode, check the difference of streaming attribute.
-    TypedValue current_value =
-        window_[current_tuple_index_]->getAttributeValue(streaming_attribute_id_);
+    TypedValue current_value;
+    if (current_value_.isNull()) {
+      current_value =
+        window_[current_tuple_index_].getAttributeValue(streaming_attribute_id_);
+    } else {
+      current_value = current_value_;
+    }
+    
     TypedValue test_value =
         range_compare_type_->coerceValue(
-            window_[test_tuple_index]->getAttributeValue(streaming_attribute_id_),
+            window_[test_tuple_index].getAttributeValue(streaming_attribute_id_),
             TypeFactory::GetType(current_value.getTypeID()));
 
 
@@ -134,6 +144,15 @@ bool WindowAggregationHandle::inWindow(const std::size_t test_tuple_index) const
   }
 
   return true;
+}
+
+void WindowAggregationHandle::moveForward() {
+  if (emit_duration_.isNull()) {
+    current_tuple_index_++;
+  } else {
+    current_value_ =
+        range_add_operator_->applyToTypedValues(current_value_, emit_duration_);
+  }
 }
 
 }  // namespace quickstep

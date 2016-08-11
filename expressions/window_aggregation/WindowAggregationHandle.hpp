@@ -115,9 +115,8 @@ class WindowAggregationHandle {
    *
    * @return A ColumnVector of the calculated window aggregates.
    **/
-  virtual std::vector<TypedValue>* calculateAggregate(
-      TupleVectorValueAccessor *input,
-      const TypedValue emit_duration) = 0;
+  virtual std::vector<std::vector<TypedValue>>* calculate(
+      TupleVectorValueAccessor *input) = 0;
 
  protected:
   /**
@@ -132,6 +131,8 @@ class WindowAggregationHandle {
   WindowAggregationHandle(
       std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
       const Scalar &streaming_attribute,
+      const TypedValue emit_duration,
+      const TypedValue start_value,
       const bool is_row,
       const TypedValue value_preceding,
       const TypedValue value_following);
@@ -146,6 +147,13 @@ class WindowAggregationHandle {
    **/
   bool inWindow(const std::size_t test_tuple_id) const;
 
+  /**
+   * @brief Move to the next window.
+   * @note For aggregation, change current_value. For window aggregation, change
+   *       current_tuple_index.
+   **/
+  void moveForward();
+
   // Partition keys.
   const std::vector<std::unique_ptr<const Scalar>> partition_by_attributes_;
 
@@ -158,6 +166,10 @@ class WindowAggregationHandle {
   std::unique_ptr<UncheckedComparator> range_comparator_;  // Less than or Equal
   std::unique_ptr<const Type> range_compare_type_;
 
+  // Emission information
+  const TypedValue emit_duration_;
+  TypedValue current_value_;
+
   // Window frame information.
   const bool is_row_;
   const TypedValue value_preceding_;
@@ -166,7 +178,7 @@ class WindowAggregationHandle {
   // Information for current in-window tuples.
   // For UNBOUNDED PRECEDING case, only store the tuples that have not made the
   // output.
-  std::deque<const Tuple*> window_;
+  std::deque<Tuple> window_;
   std::size_t current_tuple_index_;
 
  private:

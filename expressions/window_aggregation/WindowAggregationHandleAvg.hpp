@@ -51,9 +51,8 @@ class WindowAggregationHandleAvg : public WindowAggregationHandle {
  public:
   ~WindowAggregationHandleAvg() override {}
 
-  std::vector<TypedValue>* calculateAggregate(
-      TupleVectorValueAccessor *input,
-      const TypedValue emit_duration);
+  std::vector<std::vector<TypedValue>>* calculate(
+      TupleVectorValueAccessor *input) override;
 
  private:
   friend class WindowAggregateFunctionAvg;
@@ -71,12 +70,16 @@ class WindowAggregationHandleAvg : public WindowAggregationHandle {
   WindowAggregationHandleAvg(
       std::vector<std::unique_ptr<const Scalar>> &&partition_by_attributes,
       const Scalar &streaming_attribute,
+      const TypedValue emit_duration,
+      const TypedValue start_value,
       const bool is_row,
       const TypedValue value_preceding,
       const TypedValue value_following,
-      const Scalar *argument);
+      const Scalar &argument);
 
-  std::unique_ptr<const Scalar> argument_;
+  void getOutput(std::vector<TypedValue> *output) const;
+
+  const Scalar &argument_;
   const Type *result_type_;
   std::unique_ptr<UncheckedBinaryOperator> fast_add_operator_;
   std::unique_ptr<UncheckedBinaryOperator> fast_subtract_operator_;
@@ -84,6 +87,7 @@ class WindowAggregationHandleAvg : public WindowAggregationHandle {
 
   // Handle State.
   TypedValue sum_;
+  std::size_t count_;
 
   DISALLOW_COPY_AND_ASSIGN(WindowAggregationHandleAvg);
 };
